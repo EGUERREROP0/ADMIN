@@ -9,6 +9,7 @@ import MainLayout from '../../layouts/MainLayout';
 import CustomModal from '../../components/Modal';
 import CustomButton from '../../components/Button/CustomButton';
 import Table from '../../components/Table/Table';
+import UserSearch from './UserSearch';
 
 const EyeIcon = ({ style = {}, ...props }) => (
   <svg
@@ -55,27 +56,40 @@ const UserList = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [userToConvert, setUserToConvert] = useState(null);
 
+  const [search, setSearch] = useState('');
+
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const roleId =
     currentUser?.role_id ||
     currentUser?.user_role?.id ||
     (typeof currentUser?.user_role === 'number' ? currentUser.user_role : undefined);
 
+  const fetchUsers = (searchValue = '') => {
+    setLoading(true);
+    getUsers(searchValue)
+      .then(data => setUsers(Array.isArray(data) ? data : []))
+      .catch(() => {
+        setError('No tienes permisos para ver la lista de usuarios.');
+        setUsers([]);
+      })
+      .finally(() => setLoading(false));
+  };
+
   useEffect(() => {
     if (roleId === 3) {
-      getUsers()
-        .then(data => setUsers(Array.isArray(data) ? data : []))
-        .catch(() => {
-          setError('No tienes permisos para ver la lista de usuarios.');
-          setUsers([]);
-        })
-        .finally(() => setLoading(false));
+      fetchUsers();
     } else {
       setLoading(false);
       setError('No tienes permisos para ver la lista de usuarios.');
       setUsers([]);
     }
+    // eslint-disable-next-line
   }, [roleId, success]);
+
+  const handleSearch = (value) => {
+    setSearch(value);
+    fetchUsers(value);
+  };
 
   const handleConvertToAdmin = async (id) => {
     setError('');
@@ -88,8 +102,7 @@ const UserList = () => {
       setAdminToAssign(id);
       setShowIncidentTypeModal(true);
       setSuccess('Usuario convertido a admin correctamente. Ahora asigna el tipo de incidente.');
-      const data = await getUsers();
-      setUsers(Array.isArray(data) ? data : []);
+      fetchUsers(search);
     } catch {
       setError('No se pudo convertir el usuario a admin.');
     } finally {
@@ -257,6 +270,7 @@ const UserList = () => {
   return (
     <MainLayout>
       <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Usuarios</h3>
+      <UserSearch onSearch={handleSearch} />
       {loading ? (
         <div className="d-flex align-items-center" style={{ minHeight: 120 }}>
           <div className="spinner-border text-info me-2" role="status" />

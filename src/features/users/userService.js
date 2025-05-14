@@ -1,7 +1,10 @@
 import api from '../../services/api';
 
-export const getUsers = async () => {
-  const response = await api.get('/user?page=1&limit=10');
+export const getUsers = async (search = '') => {
+  const url = search
+    ? `/user?page=1&limit=10&search=${encodeURIComponent(search)}`
+    : '/user?page=1&limit=10';
+  const response = await api.get(url);
   return response.data.users;
 };
 
