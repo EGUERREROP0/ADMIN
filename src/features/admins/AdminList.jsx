@@ -13,9 +13,12 @@ const palette = {
   grisMedio: '#e6f7fb'
 };
 
-const tableHeaderColor = '#009fc3';
-const tableRowEven = "#f6f7fb";
-const tableRowOdd = "#fff";
+// Variables para modo oscuro
+const tableHeaderColor = 'var(--color-table-header, #009fc3)';
+const tableRowEven = 'var(--color-table-row-even, #f6f7fb)';
+const tableRowOdd = 'var(--color-table-row-odd, #fff)';
+const tableTextColor = 'var(--color-text, #222)';
+const moduleBg = 'var(--color-module, #f8f9fa)';
 
 const AdminList = () => {
   const [admins, setAdmins] = useState([]);
@@ -26,10 +29,8 @@ const AdminList = () => {
     setLoading(true);
     getAdmins()
       .then(data => {
-        console.log('Respuesta de getAdmins:', data);
         // Filtrar solo admins por role_id === 2
         const adminsOnly = (data || []).filter(u => u.role_id === 2);
-        console.log('Admins filtrados:', adminsOnly);
         setAdmins(adminsOnly);
       })
       .finally(() => setLoading(false));
@@ -86,29 +87,63 @@ const AdminList = () => {
 
   return (
     <MainLayout>
-      <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Administradores</h3>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-        <CustomButton onClick={() => setShowModal(true)}>
-          Agregar administrador
-        </CustomButton>
+      <div
+        className="module-container"
+        style={{
+          background: moduleBg,
+          borderRadius: 16,
+          padding: '2rem',
+          margin: '1rem 0',
+          boxShadow: '0 2px 8px #00AEEF11',
+          color: tableTextColor
+        }}
+      >
+        <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Administradores</h3>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+          <CustomButton onClick={() => setShowModal(true)}>
+            Agregar administrador
+          </CustomButton>
+        </div>
+        <Table
+          columns={columns}
+          data={admins}
+          rowKey="id"
+          loading={loading}
+          headerStyle={{ background: tableHeaderColor, color: '#fff' }}
+          rowStyle={(_, idx) => ({
+            background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
+            color: tableTextColor
+          })}
+        />
+        <CustomModal show={showModal} onHide={() => setShowModal(false)} title="Nuevo administrador">
+          <AdminCreateForm onSuccess={() => {
+            setShowModal(false);
+            fetchAdmins();
+          }} />
+        </CustomModal>
       </div>
-      <Table
-        columns={columns}
-        data={admins}
-        rowKey="id"
-        loading={loading}
-        headerStyle={{ background: tableHeaderColor }}
-        rowStyle={(_, idx) => ({
-          background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
-          color: '#222'
-        })}
-      />
-      <CustomModal show={showModal} onHide={() => setShowModal(false)} title="Nuevo administrador">
-        <AdminCreateForm onSuccess={() => {
-          setShowModal(false);
-          fetchAdmins();
-        }} />
-      </CustomModal>
+      {/* Estilos para modo oscuro en tablas y módulo */}
+      <style>
+        {`
+          .module-container {
+            transition: background 0.3s, color 0.3s;
+          }
+          .table, .table thead, .table tbody, .table tr, .table th, .table td {
+            background: var(--color-table, #fff) !important;
+            color: var(--color-text, #222) !important;
+            transition: background 0.3s, color 0.3s;
+          }
+          body.dark-mode .table, 
+          body.dark-mode .table thead, 
+          body.dark-mode .table tbody, 
+          body.dark-mode .table tr, 
+          body.dark-mode .table th, 
+          body.dark-mode .table td {
+            background: var(--color-table, #23272f) !important;
+            color: var(--color-text, #f1f1f1) !important;
+          }
+        `}
+      </style>
     </MainLayout>
   );
 };

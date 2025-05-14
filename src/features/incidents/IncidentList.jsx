@@ -32,9 +32,12 @@ const statusColors = {
   re_abierto: palette.naranja
 };
 
-const tableHeaderColor = '#009fc3';
-const tableRowEven = "#f6f7fb";
-const tableRowOdd = "#fff";
+// Variables para modo oscuro
+const tableHeaderColor = 'var(--color-table-header, #009fc3)';
+const tableRowEven = 'var(--color-table-row-even, #f6f7fb)';
+const tableRowOdd = 'var(--color-table-row-odd, #fff)';
+const tableTextColor = 'var(--color-text, #222)';
+const moduleBg = 'var(--color-module, #f8f9fa)';
 
 const IncidentList = () => {
   const [incidents, setIncidents] = useState([]);
@@ -193,136 +196,170 @@ const IncidentList = () => {
 
   return (
     <MainLayout>
-      <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Incidentes</h3>
-      <IncidentFilters
-        prioridad={prioridad}
-        setPrioridad={setPrioridad}
-        estado={estado}
-        setEstado={setEstado}
-        tipo={tipo}
-        setTipo={setTipo}
-        tiposIncidente={tiposIncidente}
-        estados={statuses}
-        search={search}
-        setSearch={setSearch}
-      />
-
-      {/* Selector de vista */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-        <button
-          onClick={() => setVista('tabla')}
-          style={{
-            background: vista === 'tabla' ? '#2c3a59' : '#fff',
-            color: vista === 'tabla' ? '#fff' : '#2c3a59',
-            border: '1px solid #2c3a59',
-            borderRadius: '6px 0 0 6px',
-            padding: '6px 18px',
-            cursor: 'pointer'
-          }}
-        >
-          Tabla
-        </button>
-        <button
-          onClick={() => setVista('tarjetas')}
-          style={{
-            background: vista === 'tarjetas' ? '#2c3a59' : '#fff',
-            color: vista === 'tarjetas' ? '#fff' : '#2c3a59',
-            border: '1px solid #2c3a59',
-            borderLeft: 'none',
-            borderRadius: '0 6px 6px 0',
-            padding: '6px 18px',
-            cursor: 'pointer'
-          }}
-        >
-          Tarjetas
-        </button>
-      </div>
-
-      {loading ? (
-        <div className="d-flex align-items-center" style={{ minHeight: 120 }}>
-          <div className="spinner-border text-info me-2" role="status" />
-          <span style={{ color: palette.celeste }}>Cargando...</span>
-        </div>
-      ) : error ? (
-        <div className="alert alert-danger">{error}</div>
-      ) : (
-        <>
-          {success && <div className="alert alert-success">{success}</div>}
-          {vista === 'tabla' ? (
-            <Table
-              columns={columns}
-              data={incidents}
-              rowKey="id"
-              loading={loading}
-              headerStyle={{ background: tableHeaderColor }}
-              rowStyle={(_, idx) => ({
-                background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
-                color: '#222'
-              })}
-            />
-          ) : (
-            <IncidentCards
-              incidents={incidents}
-              onChangeStatus={handleOpenStatusModal}
-            />
-          )}
-        </>
-      )}
-
-      {/* Modal para cambiar estado */}
-      <CustomModal
-        show={showStatusModal}
-        onHide={() => setShowStatusModal(false)}
-        title="Cambiar estado del incidente"
+      <div
+        className="module-container"
+        style={{
+          background: moduleBg,
+          borderRadius: 16,
+          padding: '2rem',
+          margin: '1rem 0',
+          boxShadow: '0 2px 8px #00AEEF11',
+          color: tableTextColor
+        }}
       >
-        <div style={{ background: palette.grisClaro, borderRadius: 8, padding: 16 }}>
-          <p>
-            <b>Incidente ID:</b> {selectedIncident?.id}
-          </p>
-          <label style={{ color: palette.celeste, fontWeight: 600 }}>
-            Nuevo estado:
-          </label>
-          <select
-            className="form-select mt-2"
-            value={newStatusId}
-            onChange={e => setNewStatusId(e.target.value)}
-            style={{ borderColor: palette.celeste, fontWeight: 500 }}
-            disabled={updating}
+        <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Incidentes</h3>
+        <IncidentFilters
+          prioridad={prioridad}
+          setPrioridad={setPrioridad}
+          estado={estado}
+          setEstado={setEstado}
+          tipo={tipo}
+          setTipo={setTipo}
+          tiposIncidente={tiposIncidente}
+          estados={statuses}
+          search={search}
+          setSearch={setSearch}
+        />
+
+        {/* Selector de vista */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+          <button
+            onClick={() => setVista('tabla')}
+            style={{
+              background: vista === 'tabla' ? '#2c3a59' : '#fff',
+              color: vista === 'tabla' ? '#fff' : '#2c3a59',
+              border: '1px solid #2c3a59',
+              borderRadius: '6px 0 0 6px',
+              padding: '6px 18px',
+              cursor: 'pointer'
+            }}
           >
-            <option value="">Selecciona...</option>
-            {statuses.map(status => (
-              <option key={status.id} value={status.id}>
-                {status.name.charAt(0).toUpperCase() + status.name.slice(1).replace('_', ' ')}
-              </option>
-            ))}
-          </select>
-          <div className="d-flex justify-content-end gap-2 mt-4">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setShowStatusModal(false)}
-              disabled={updating}
-            >
-              Cancelar
-            </button>
-            <CustomButton
-              type="button"
-              onClick={handleUpdateStatus}
-              disabled={updating}
-            >
-              {updating ? (
-                <span>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" />
-                  Actualizando...
-                </span>
-              ) : (
-                'Actualizar'
-              )}
-            </CustomButton>
-          </div>
-          {error && <div className="alert alert-danger mt-3">{error}</div>}
+            Tabla
+          </button>
+          <button
+            onClick={() => setVista('tarjetas')}
+            style={{
+              background: vista === 'tarjetas' ? '#2c3a59' : '#fff',
+              color: vista === 'tarjetas' ? '#fff' : '#2c3a59',
+              border: '1px solid #2c3a59',
+              borderLeft: 'none',
+              borderRadius: '0 6px 6px 0',
+              padding: '6px 18px',
+              cursor: 'pointer'
+            }}
+          >
+            Tarjetas
+          </button>
         </div>
-      </CustomModal>
+
+        {loading ? (
+          <div className="d-flex align-items-center" style={{ minHeight: 120 }}>
+            <div className="spinner-border text-info me-2" role="status" />
+            <span style={{ color: palette.celeste }}>Cargando...</span>
+          </div>
+        ) : error ? (
+          <div className="alert alert-danger">{error}</div>
+        ) : (
+          <>
+            {success && <div className="alert alert-success">{success}</div>}
+            {vista === 'tabla' ? (
+              <Table
+                columns={columns}
+                data={incidents}
+                rowKey="id"
+                loading={loading}
+                headerStyle={{ background: tableHeaderColor, color: '#fff' }}
+                rowStyle={(_, idx) => ({
+                  background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
+                  color: tableTextColor
+                })}
+              />
+            ) : (
+              <IncidentCards
+                incidents={incidents}
+                onChangeStatus={handleOpenStatusModal}
+              />
+            )}
+          </>
+        )}
+
+        {/* Modal para cambiar estado */}
+        <CustomModal
+          show={showStatusModal}
+          onHide={() => setShowStatusModal(false)}
+          title="Cambiar estado del incidente"
+        >
+          <div style={{ background: palette.grisClaro, borderRadius: 8, padding: 16 }}>
+            <p>
+              <b>Incidente ID:</b> {selectedIncident?.id}
+            </p>
+            <label style={{ color: palette.celeste, fontWeight: 600 }}>
+              Nuevo estado:
+            </label>
+            <select
+              className="form-select mt-2"
+              value={newStatusId}
+              onChange={e => setNewStatusId(e.target.value)}
+              style={{ borderColor: palette.celeste, fontWeight: 500 }}
+              disabled={updating}
+            >
+              <option value="">Selecciona...</option>
+              {statuses.map(status => (
+                <option key={status.id} value={status.id}>
+                  {status.name.charAt(0).toUpperCase() + status.name.slice(1).replace('_', ' ')}
+                </option>
+              ))}
+            </select>
+            <div className="d-flex justify-content-end gap-2 mt-4">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowStatusModal(false)}
+                disabled={updating}
+              >
+                Cancelar
+              </button>
+              <CustomButton
+                type="button"
+                onClick={handleUpdateStatus}
+                disabled={updating}
+              >
+                {updating ? (
+                  <span>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" />
+                    Actualizando...
+                  </span>
+                ) : (
+                  'Actualizar'
+                )}
+              </CustomButton>
+            </div>
+            {error && <div className="alert alert-danger mt-3">{error}</div>}
+          </div>
+        </CustomModal>
+      </div>
+      {/* Estilos para modo oscuro en tablas y módulo */}
+      <style>
+        {`
+          .module-container {
+            transition: background 0.3s, color 0.3s;
+          }
+          .table, .table thead, .table tbody, .table tr, .table th, .table td {
+            background: var(--color-table, #fff) !important;
+            color: var(--color-text, #222) !important;
+            transition: background 0.3s, color 0.3s;
+          }
+          body.dark-mode .table, 
+          body.dark-mode .table thead, 
+          body.dark-mode .table tbody, 
+          body.dark-mode .table tr, 
+          body.dark-mode .table th, 
+          body.dark-mode .table td {
+            background: var(--color-table, #23272f) !important;
+            color: var(--color-text, #f1f1f1) !important;
+          }
+        `}
+      </style>
     </MainLayout>
   );
 };

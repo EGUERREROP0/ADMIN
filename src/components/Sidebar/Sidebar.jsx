@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-// Importa las imágenes de iconos
 import dashboardIcon from '../../assets/iconos/dashboard.png';
 import usuariosIcon from '../../assets/iconos/usuarios.png';
 import incidentesIcon from '../../assets/iconos/incidentes.png';
@@ -30,7 +29,6 @@ const Sidebar = () => {
     }
   ];
 
-  // Solo para superadmin, agrega "Administradores"
   if (roleId === 3) {
     sidebarLinks.push({
       to: '/administradores',
@@ -41,12 +39,14 @@ const Sidebar = () => {
 
   return (
     <aside
+      className="sidebar-fixed"
       style={{
         width: 220,
-        background: '#fff',
         minHeight: 'calc(100vh - 56px)',
         boxShadow: '2px 0 8px #00AEEF11',
-        padding: '2rem 0.5rem'
+        padding: '2rem 0.5rem',
+        background: 'var(--color-sidebar)',
+        transition: 'background 0.3s'
       }}
     >
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -58,13 +58,14 @@ const Sidebar = () => {
                 display: 'flex',
                 alignItems: 'center',
                 padding: '0.75rem 1.5rem',
-                color: location.pathname === link.to ? '#00AEEF' : '#333',
+                color: location.pathname === link.to ? '#00AEEF' : 'var(--color-text)',
                 fontWeight: location.pathname === link.to ? 700 : 500,
                 background: location.pathname === link.to ? '#e6f7fb' : 'transparent',
                 borderRadius: 8,
                 textDecoration: 'none',
                 marginBottom: 8,
-                fontSize: 17
+                fontSize: 17,
+                transition: 'color 0.3s, background 0.3s'
               }}
             >
               {link.icon}

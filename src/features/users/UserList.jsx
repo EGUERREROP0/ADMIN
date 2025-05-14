@@ -36,10 +36,6 @@ const palette = {
   grisMedio: '#e6f7fb'
 };
 
-const tableHeaderColor = '#009fc3'; // Turquesa oscuro
-const tableRowEven = "#f6f7fb";
-const tableRowOdd = "#fff";
-
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -174,6 +170,13 @@ const UserList = () => {
     };
   };
 
+  // Variables para modo oscuro
+  const tableHeaderColor = 'var(--color-table-header, #009fc3)';
+  const tableRowEven = 'var(--color-table-row-even, #f6f7fb)';
+  const tableRowOdd = 'var(--color-table-row-odd, #fff)';
+  const tableTextColor = 'var(--color-text, #222)';
+  const moduleBg = 'var(--color-module, #f8f9fa)';
+
   const columns = [
     {
       key: 'name',
@@ -269,31 +272,46 @@ const UserList = () => {
 
   return (
     <MainLayout>
-      <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Usuarios</h3>
-      <UserSearch onSearch={handleSearch} />
-      {loading ? (
-        <div className="d-flex align-items-center" style={{ minHeight: 120 }}>
-          <div className="spinner-border text-info me-2" role="status" />
-          <span style={{ color: palette.celeste }}>Cargando...</span>
-        </div>
-      ) : error ? (
-        <div className="alert alert-danger mt-4">{error}</div>
-      ) : (
-        <>
-          {success && <div className="alert alert-success">{success}</div>}
-          <Table
-            columns={columns}
-            data={users}
-            rowKey="id"
-            loading={loading}
-            headerStyle={{ background: tableHeaderColor }}
-            rowStyle={(_, idx) => ({
-              background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
-              color: '#222'
-            })}
-          />
-        </>
-      )}
+      <div
+        className="module-container"
+        style={{
+          background: moduleBg,
+          borderRadius: 16,
+          padding: '2rem',
+          margin: '1rem 0',
+          boxShadow: '0 2px 8px #00AEEF11',
+          color: tableTextColor
+        }}
+      >
+        <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Usuarios</h3>
+        <UserSearch onSearch={handleSearch} />
+        {loading ? (
+          <div className="d-flex align-items-center" style={{ minHeight: 120 }}>
+            <div className="spinner-border text-info me-2" role="status" />
+            <span style={{ color: palette.celeste }}>Cargando...</span>
+          </div>
+        ) : error ? (
+          <div className="alert alert-danger mt-4">{error}</div>
+        ) : (
+          <>
+            {success && <div className="alert alert-success">{success}</div>}
+            <Table
+              columns={columns}
+              data={users}
+              rowKey="id"
+              loading={loading}
+              headerStyle={{
+                background: tableHeaderColor,
+                color: '#fff'
+              }}
+              rowStyle={(_, idx) => ({
+                background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
+                color: tableTextColor
+              })}
+            />
+          </>
+        )}
+      </div>
 
       {/* Modal para detalle de usuario */}
       <CustomModal
@@ -371,6 +389,28 @@ const UserList = () => {
           {error && <div className="alert alert-danger mt-3">{error}</div>}
         </div>
       </CustomModal>
+      {/* Estilos para modo oscuro en tablas y módulo */}
+      <style>
+        {`
+          .module-container {
+            transition: background 0.3s, color 0.3s;
+          }
+          .table, .table thead, .table tbody, .table tr, .table th, .table td {
+            background: var(--color-table, #fff) !important;
+            color: var(--color-text, #222) !important;
+            transition: background 0.3s, color 0.3s;
+          }
+          body.dark-mode .table, 
+          body.dark-mode .table thead, 
+          body.dark-mode .table tbody, 
+          body.dark-mode .table tr, 
+          body.dark-mode .table th, 
+          body.dark-mode .table td {
+            background: var(--color-table, #23272f) !important;
+            color: var(--color-text, #f1f1f1) !important;
+          }
+        `}
+      </style>
     </MainLayout>
   );
 };
