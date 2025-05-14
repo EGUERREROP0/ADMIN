@@ -1,7 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import CustomButton from '../../components/Button/CustomButton';
+import CustomInput from '../../components/Input/CustomInput';
 import { createAdmin } from './adminService';
+
+const selectStyle = {
+  width: '100%',
+  padding: '8px 12px',
+  borderRadius: '6px',
+  border: '1px solid #bdbdbd',
+  fontSize: '15px',
+  marginTop: '4px',
+  marginBottom: '8px',
+  background: '#f8f9fa',
+  outline: 'none',
+  transition: 'border-color 0.2s',
+};
+
+const labelStyle = {
+  fontWeight: 500,
+  marginBottom: 2,
+  display: 'block'
+};
 
 const AdminCreateForm = ({ onSuccess }) => {
   const [form, setForm] = useState({
@@ -49,25 +69,57 @@ const AdminCreateForm = ({ onSuccess }) => {
     <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
       <h3>Registrar nuevo administrador</h3>
       <div>
-        <label>Nombre</label>
-        <input name="first_name" value={form.first_name} onChange={handleChange} required />
+        <label style={labelStyle}>Nombre</label>
+        <CustomInput
+          name="first_name"
+          value={form.first_name}
+          onChange={handleChange}
+          required
+          placeholder="Nombre"
+        />
       </div>
       <div>
-        <label>Apellido</label>
-        <input name="last_name" value={form.last_name} onChange={handleChange} required />
+        <label style={labelStyle}>Apellido</label>
+        <CustomInput
+          name="last_name"
+          value={form.last_name}
+          onChange={handleChange}
+          required
+          placeholder="Apellido"
+        />
       </div>
       <div>
-        <label>Email</label>
-        <input name="email" type="email" value={form.email} onChange={handleChange} required />
+        <label style={labelStyle}>Email</label>
+        <CustomInput
+          name="email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          required
+          placeholder="Correo electrónico"
+        />
       </div>
       <div>
-        <label>Contraseña</label>
-        <input name="password" type="password" value={form.password} onChange={handleChange} required />
+        <label style={labelStyle}>Contraseña</label>
+        <CustomInput
+          name="password"
+          type="password"
+          value={form.password}
+          onChange={handleChange}
+          required
+          placeholder="Contraseña"
+        />
       </div>
       <div>
-        <label>Tipo de incidente</label>
-        <select name="incident_type_id" value={form.incident_type_id} onChange={handleChange} required>
-          <option value="">Seleccione...</option>
+        <label style={labelStyle}>Tipo de incidente</label>
+        <select
+          name="incident_type_id"
+          value={form.incident_type_id}
+          onChange={handleChange}
+          required
+          style={selectStyle}
+        >
+          <option value="" disabled>Seleccione...</option>
           {incidentTypes.map(type => (
             <option key={type.id} value={type.id}>{type.name}</option>
           ))}
