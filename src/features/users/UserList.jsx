@@ -10,6 +10,24 @@ import CustomModal from '../../components/Modal';
 import CustomButton from '../../components/Button/CustomButton';
 import Table from '../../components/Table/Table';
 
+const EyeIcon = ({ style = {}, ...props }) => (
+  <svg
+    style={{ width: 26, height: 26, color: '#00AEEF', cursor: 'pointer', ...style }}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path
+      d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"
+      stroke="currentColor"
+      fill="none"
+    />
+    <circle cx="12" cy="12" r="3" stroke="currentColor" fill="none" />
+  </svg>
+);
+
 const palette = {
   celeste: '#00AEEF',
   blanco: '#fff',
@@ -201,12 +219,16 @@ const UserList = () => {
       title: 'Acciones',
       render: (u) => (
         <>
-          <CustomButton
-            type="button"
+          <span
+            title="Ver detalles"
+            style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 8 }}
             onClick={() => setSelectedUser(u)}
+            role="button"
+            tabIndex={0}
+            onKeyPress={e => { if (e.key === 'Enter') setSelectedUser(u); }}
           >
-            Ver detalles
-          </CustomButton>
+            <EyeIcon />
+          </span>
           {roleId === 3 && u.role_id === 1 && (
             <button
               type="button"
@@ -216,7 +238,7 @@ const UserList = () => {
                 background: '#fff',
                 color: palette.celeste,
                 border: `1.5px solid ${palette.celeste}`,
-                marginLeft: 8
+                marginLeft: 0
               }}
               onClick={() => {
                 setUserToConvert(u);
