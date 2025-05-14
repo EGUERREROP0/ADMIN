@@ -1,0 +1,342 @@
+import React, { useEffect, useState } from 'react';
+import {
+  getUsers,
+  convertToAdmin,
+  getIncidentTypes,
+  assignIncidentTypeToAdmin
+} from './userService';
+import MainLayout from '../../layouts/MainLayout';
+import CustomModal from '../../components/Modal';
+import CustomButton from '../../components/Button/CustomButton';
+import Table from '../../components/Table/Table';
+
+const palette = {
+  celeste: '#00AEEF',
+  blanco: '#fff',
+  grisClaro: '#f8f9fa',
+  grisMedio: '#e6f7fb'
+};
+
+const tableHeaderColor = '#009fc3'; // Turquesa oscuro
+const tableRowEven = "#f6f7fb";
+const tableRowOdd = "#fff";
+
+const UserList = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [convertingId, setConvertingId] = useState(null);
+  const [incidentTypes, setIncidentTypes] = useState([]);
+  const [showIncidentTypeModal, setShowIncidentTypeModal] = useState(false);
+  const [incidentTypeId, setIncidentTypeId] = useState('');
+  const [adminToAssign, setAdminToAssign] = useState(null);
+  const [assigning, setAssigning] = useState(false);
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [userToConvert, setUserToConvert] = useState(null);
+
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const roleId =
+    currentUser?.role_id ||
+    currentUser?.user_role?.id ||
+    (typeof currentUser?.user_role === 'number' ? currentUser.user_role : undefined);
+
+  useEffect(() => {
+    if (roleId === 3) {
+      getUsers()
+        .then(data => setUsers(Array.isArray(data) ? data : []))
+        .catch(() => {
+          setError('No tienes permisos para ver la lista de usuarios.');
+          setUsers([]);
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+      setError('No tienes permisos para ver la lista de usuarios.');
+      setUsers([]);
+    }
+  }, [roleId, success]);
+
+  const handleConvertToAdmin = async (id) => {
+    setError('');
+    setSuccess('');
+    setConvertingId(id);
+    try {
+      await convertToAdmin(id);
+      const types = await getIncidentTypes();
+      setIncidentTypes(Array.isArray(types) ? types : []);
+      setAdminToAssign(id);
+      setShowIncidentTypeModal(true);
+      setSuccess('Usuario convertido a admin correctamente. Ahora asigna el tipo de incidente.');
+      const data = await getUsers();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch {
+      setError('No se pudo convertir el usuario a admin.');
+    } finally {
+      setConvertingId(null);
+    }
+  };
+
+  const handleConfirmConvert = async () => {
+    if (!userToConvert) return;
+    setShowConfirmModal(false);
+    await handleConvertToAdmin(userToConvert.id);
+    setUserToConvert(null);
+  };
+
+  const handleAssignIncidentType = async () => {
+    if (!incidentTypeId) {
+      setError('Selecciona un tipo de incidente.');
+      return;
+    }
+    setError('');
+    setAssigning(true);
+    try {
+      await assignIncidentTypeToAdmin(adminToAssign, incidentTypeId);
+      setSuccess('Tipo de incidente asignado correctamente.');
+      setShowIncidentTypeModal(false);
+      setIncidentTypeId('');
+      setAdminToAssign(null);
+    } catch {
+      setError('No se pudo asignar el tipo de incidente.');
+    } finally {
+      setAssigning(false);
+    }
+  };
+
+  const handleCloseIncidentTypeModal = () => {
+    setShowIncidentTypeModal(false);
+    setIncidentTypeId('');
+    setAdminToAssign(null);
+    setError('');
+  };
+
+  const getRoleStyle = (role) => {
+    const name = typeof role === 'object' ? role.name : role;
+    if (name === 'user') {
+      return {
+        background: 'rgba(40, 167, 69, 0.15)',
+        color: '#28a745',
+        border: '1.5px solid #28a745'
+      };
+    }
+    if (name === 'admin') {
+      return {
+        background: 'rgba(255, 193, 7, 0.25)',
+        color: '#ffc107',
+        border: '1.5px solid #ffc107'
+      };
+    }
+    if (name === 'superadmin') {
+      return {
+        background: 'rgba(0, 174, 239, 0.15)',
+        color: '#00AEEF',
+        border: '1.5px solid #00AEEF'
+      };
+    }
+    return {
+      background: palette.celeste,
+      color: palette.blanco,
+      border: 'none'
+    };
+  };
+
+  const columns = [
+    {
+      key: 'name',
+      title: 'Nombre',
+      render: (u) => (
+        <span style={{ fontWeight: 600 }}>
+          {u.first_name} {u.last_name}
+        </span>
+      )
+    },
+    {
+      key: 'email',
+      title: 'Correo',
+      dataIndex: 'email'
+    },
+    {
+      key: 'rol',
+      title: 'Rol',
+      render: (u) => (
+        <span
+          style={{
+            ...getRoleStyle(u.user_role),
+            padding: '0.25rem 0.9rem',
+            borderRadius: 14,
+            fontWeight: 600,
+            fontSize: 15,
+            minWidth: 70,
+            display: 'inline-block',
+            textAlign: 'center'
+          }}
+        >
+          {typeof u.user_role === 'object' ? u.user_role.name : u.user_role}
+        </span>
+      )
+    },
+    {
+      key: 'estado',
+      title: 'Estado',
+      render: (u) => (
+        <span
+          style={{
+            background: u.is_active ? '#e6f7fb' : '#f8d7da',
+            color: u.is_active ? palette.celeste : '#c82333',
+            padding: '0.25rem 0.75rem',
+            borderRadius: 12,
+            fontWeight: 600,
+            fontSize: 14
+          }}
+        >
+          {u.is_active ? 'Activo' : 'Inactivo'}
+        </span>
+      )
+    },
+    {
+      key: 'acciones',
+      title: 'Acciones',
+      render: (u) => (
+        <>
+          <CustomButton
+            type="button"
+            onClick={() => setSelectedUser(u)}
+          >
+            Ver detalles
+          </CustomButton>
+          {roleId === 3 && u.role_id === 1 && (
+            <button
+              type="button"
+              className="btn btn-sm btn-warning"
+              style={{
+                fontWeight: 600,
+                background: '#fff',
+                color: palette.celeste,
+                border: `1.5px solid ${palette.celeste}`,
+                marginLeft: 8
+              }}
+              onClick={() => {
+                setUserToConvert(u);
+                setShowConfirmModal(true);
+              }}
+              disabled={convertingId === u.id}
+            >
+              {convertingId === u.id ? 'Convirtiendo...' : 'Convertir a admin'}
+            </button>
+          )}
+        </>
+      )
+    }
+  ];
+
+  return (
+    <MainLayout>
+      <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Usuarios</h3>
+      {loading ? (
+        <div className="d-flex align-items-center" style={{ minHeight: 120 }}>
+          <div className="spinner-border text-info me-2" role="status" />
+          <span style={{ color: palette.celeste }}>Cargando...</span>
+        </div>
+      ) : error ? (
+        <div className="alert alert-danger mt-4">{error}</div>
+      ) : (
+        <>
+          {success && <div className="alert alert-success">{success}</div>}
+          <Table
+            columns={columns}
+            data={users}
+            rowKey="id"
+            loading={loading}
+            headerStyle={{ background: tableHeaderColor }}
+            rowStyle={(_, idx) => ({
+              background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
+              color: '#222'
+            })}
+          />
+        </>
+      )}
+
+      {/* Modal para detalle de usuario */}
+      <CustomModal
+        show={!!selectedUser}
+        onHide={() => setSelectedUser(null)}
+        title="Detalle de Usuario"
+      >
+        {selectedUser && (
+          <div>
+            <p><b>Nombre:</b> {selectedUser.first_name} {selectedUser.last_name}</p>
+            <p><b>Correo:</b> {selectedUser.email}</p>
+            <p><b>Rol:</b> {typeof selectedUser.user_role === 'object' ? selectedUser.user_role.name : selectedUser.user_role}</p>
+            <p><b>Estado:</b> {selectedUser.is_active ? 'Activo' : 'Inactivo'}</p>
+          </div>
+        )}
+      </CustomModal>
+
+      {/* Modal de confirmación personalizado */}
+      <CustomModal
+        show={showConfirmModal}
+        onHide={() => setShowConfirmModal(false)}
+        title="Confirmar conversión"
+      >
+        <div>
+          <p>
+            ¿Estás seguro de convertir a <b>{userToConvert?.first_name} {userToConvert?.last_name}</b> a admin?
+          </p>
+          <div className="d-flex justify-content-end gap-2 mt-3">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setShowConfirmModal(false)}
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="btn btn-warning"
+              onClick={handleConfirmConvert}
+            >
+              Confirmar
+            </button>
+          </div>
+        </div>
+      </CustomModal>
+
+      {/* Modal para asignar tipo de incidente */}
+      <CustomModal
+        show={showIncidentTypeModal}
+        onHide={handleCloseIncidentTypeModal}
+        title="Asignar tipo de incidente"
+      >
+        <div>
+          <label>Tipo de incidente:</label>
+          <select
+            className="form-select mt-2"
+            value={incidentTypeId}
+            onChange={e => setIncidentTypeId(e.target.value)}
+          >
+            <option value="">Selecciona...</option>
+            {(incidentTypes || []).map(type => (
+              <option key={type.id} value={type.id}>
+                {type.name}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="btn btn-primary mt-3"
+            onClick={handleAssignIncidentType}
+            disabled={assigning}
+          >
+            {assigning ? 'Asignando...' : 'Asignar'}
+          </button>
+          {error && <div className="alert alert-danger mt-3">{error}</div>}
+        </div>
+      </CustomModal>
+    </MainLayout>
+  );
+};
+
+export default UserList;
