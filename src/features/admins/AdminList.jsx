@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { getUsers } from '../users/userService';
 import MainLayout from '../../layouts/MainLayout';
 import Table from '../../components/Table/Table';
+import CustomModal from '../../components/Modal';
+import AdminCreateForm from './AdminCreateForm';
+import CustomButton from '../../components/Button/CustomButton';
+import { getAdmins } from './adminService';
 
 const palette = {
   celeste: '#00AEEF',
@@ -17,20 +20,23 @@ const tableRowOdd = "#fff";
 const AdminList = () => {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    getUsers()
+  const fetchAdmins = () => {
+    setLoading(true);
+    getAdmins()
       .then(data => {
-        // Filtrar solo admins (role_id === 2 o user_role.name === 'admin')
-        const adminsOnly = (data || []).filter(
-          u =>
-            (typeof u.user_role === 'object' && u.user_role.name === 'admin') ||
-            u.role_id === 2 ||
-            u.user_role === 'admin'
-        );
+        console.log('Respuesta de getAdmins:', data);
+        // Filtrar solo admins por role_id === 2
+        const adminsOnly = (data || []).filter(u => u.role_id === 2);
+        console.log('Admins filtrados:', adminsOnly);
         setAdmins(adminsOnly);
       })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchAdmins();
   }, []);
 
   const columns = [
@@ -69,13 +75,23 @@ const AdminList = () => {
     {
       key: 'tipo',
       title: 'Tipo de incidente',
-      render: (u) => u.incident_type?.name || u.incident_type_name || '-'
+      render: (u) =>
+        u.incident_type?.name ||
+        u.incident_type_name ||
+        (u.incident_types && Array.isArray(u.incident_types)
+          ? u.incident_types.map(t => t.name).join(', ')
+          : '-')
     }
   ];
 
   return (
     <MainLayout>
       <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Administradores</h3>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <CustomButton onClick={() => setShowModal(true)}>
+          Agregar administrador
+        </CustomButton>
+      </div>
       <Table
         columns={columns}
         data={admins}
@@ -87,6 +103,12 @@ const AdminList = () => {
           color: '#222'
         })}
       />
+      <CustomModal show={showModal} onHide={() => setShowModal(false)} title="Nuevo administrador">
+        <AdminCreateForm onSuccess={() => {
+          setShowModal(false);
+          fetchAdmins();
+        }} />
+      </CustomModal>
     </MainLayout>
   );
 };
