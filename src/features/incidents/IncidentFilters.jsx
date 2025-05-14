@@ -13,8 +13,9 @@ const IncidentFilters = ({
   setSearch
 }) => (
   <div
+    className="incident-filters-container"
     style={{
-      background: '#fff',
+      background: 'var(--color-module, #fff)',
       borderRadius: 10,
       boxShadow: '0 2px 8px #0001',
       padding: '24px 18px',
@@ -22,7 +23,8 @@ const IncidentFilters = ({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      gap: 24
+      gap: 24,
+      transition: 'background 0.3s, color 0.3s'
     }}
   >
     {/* Filtros a la izquierda */}
@@ -68,11 +70,12 @@ const IncidentFilters = ({
       style={{
         display: 'flex',
         alignItems: 'center',
-        background: '#fff',
+        background: 'var(--color-module, #fff)',
         borderRadius: 8,
         overflow: 'hidden',
         boxShadow: '0 1px 4px #0001',
-        height: 38
+        height: 38,
+        transition: 'background 0.3s'
       }}
       onSubmit={e => e.preventDefault()}
     >
@@ -86,12 +89,13 @@ const IncidentFilters = ({
           outline: 'none',
           padding: '0 0 0 12px',
           fontSize: 16,
-          color: '#666',
+          color: 'var(--color-text, #666)',
           width: 160,
-          background: '#fff',
+          background: 'var(--color-module, #fff)',
           height: '100%',
           borderRadius: 0,
-          fontWeight: 400
+          fontWeight: 400,
+          transition: 'background 0.3s, color 0.3s'
         }}
       />
       <button
@@ -115,6 +119,16 @@ const IncidentFilters = ({
         </svg>
       </button>
     </form>
+    <style>
+      {`
+        .incident-filters-container {
+          transition: background 0.3s, color 0.3s;
+        }
+        body.dark-mode .incident-filters-container {
+          background: var(--color-module, #23272f) !important;
+        }
+      `}
+    </style>
   </div>
 );
 

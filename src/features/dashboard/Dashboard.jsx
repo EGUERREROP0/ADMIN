@@ -8,6 +8,7 @@ import { FaRegFileAlt, FaHourglassHalf, FaSpinner, FaCheckCircle, FaLock, FaRedo
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { Typewriter } from 'react-simple-typewriter';
 
 const palette = {
   celeste: '#009fc3',
@@ -95,7 +96,20 @@ const Dashboard = () => {
 
   return (
     <MainLayout>
-      <h2 style={{ color: palette.celeste, fontWeight: 700 }}>Bienvenido al Panel de Administración</h2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span role="img" aria-label="Saludo" style={{ fontSize: 48, marginTop: 4 }}>👋</span>
+        <h2 style={{ color: palette.celeste, fontWeight: 700, margin: 0 }}>
+          <Typewriter
+            words={['Bienvenido al Panel de Administración']}
+            loop={1}
+            cursor
+            cursorStyle="_"
+            typeSpeed={70}
+            deleteSpeed={50}
+            delaySpeed={1500}
+          />
+        </h2>
+      </div>
       <p>¡Has iniciado sesión correctamente!</p>
       <div style={{ marginTop: 32 }}>
         {loading ? (
