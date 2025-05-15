@@ -14,7 +14,7 @@ const palette = {
 };
 
 // Variables para modo oscuro
-const tableHeaderColor = 'var(--color-table-header, #009fc3)';
+const tableHeaderColor = '#009fc3';
 const tableRowEven = 'var(--color-table-row-even, #f6f7fb)';
 const tableRowOdd = 'var(--color-table-row-odd, #fff)';
 const tableTextColor = 'var(--color-text, #222)';
@@ -141,6 +141,14 @@ const AdminList = () => {
           body.dark-mode .table td {
             background: var(--color-table, #23272f) !important;
             color: var(--color-text, #f1f1f1) !important;
+          }
+          .table thead tr th {
+            background: #009fc3 !important;
+            color: #fff !important;
+          }
+          body.dark-mode .table thead tr th {
+            background: #007a99 !important;
+            color: #fff !important;
           }
         `}
       </style>
