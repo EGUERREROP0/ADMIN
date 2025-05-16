@@ -3,6 +3,10 @@ import api from '../../services/api';
 import CustomButton from '../../components/Button/CustomButton';
 import CustomInput from '../../components/Input/CustomInput';
 import { createAdmin } from './adminService';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const selectStyle = {
   width: '100%',
@@ -32,8 +36,6 @@ const AdminCreateForm = ({ onSuccess }) => {
     incident_type_id: ''
   });
   const [incidentTypes, setIncidentTypes] = useState([]);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     api.get('/type-incident')
@@ -47,11 +49,8 @@ const AdminCreateForm = ({ onSuccess }) => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
     try {
       await createAdmin(form);
-      setSuccess('Administrador creado correctamente');
       setForm({
         first_name: '',
         last_name: '',
@@ -59,9 +58,22 @@ const AdminCreateForm = ({ onSuccess }) => {
         password: '',
         incident_type_id: ''
       });
+      // Alerta SweetAlert2 de éxito
+      await MySwal.fire({
+        title: '¡Éxito!',
+        text: 'Administrador creado correctamente.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
       if (onSuccess) onSuccess();
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al crear administrador');
+      // Alerta SweetAlert2 de error
+      await MySwal.fire({
+        title: 'Error',
+        text: err?.response?.data?.error || 'Error al crear administrador',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
     }
   };
 
@@ -130,8 +142,7 @@ const AdminCreateForm = ({ onSuccess }) => {
           Registrar
         </CustomButton>
       </div>
-      {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
-      {success && <div style={{ color: 'green', marginTop: 8 }}>{success}</div>}
+      {/* Las alertas visuales ahora se muestran con SweetAlert2 */}
     </form>
   );
 };

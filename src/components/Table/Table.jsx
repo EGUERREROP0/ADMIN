@@ -11,14 +11,14 @@ const Table = ({
 }) => (
   <div className="table-responsive"
     style={{
-      borderRadius: 5,
+      borderRadius: 7, // Sin borde circular
       boxShadow: '0 4px 24px rgba(44, 62, 80, 0.08)',
       overflow: 'hidden',
       margin: '2rem 0',
       background: '#fff',
       padding: 0
     }}>
-    <table className="table mb-0" style={{ borderRadius: 16, overflow: 'hidden' }}>
+    <table className="table mb-0" style={{ borderRadius: 0, overflow: 'hidden' }}>
       <thead style={headerStyle}>
         <tr>
           {columns.map(col => (

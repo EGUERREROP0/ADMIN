@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Switch from 'react-switch';
+import { MdLogout } from 'react-icons/md';
 import { ProfileMenu } from '../features/profile';
 import Sidebar from '../components/Sidebar';
-import CustomModal from '../components/Modal';
 import logoTecsup from '../assets/header/logo_tecsup.png';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const MainLayout = ({ children }) => {
-  // Lee el valor inicial de localStorage al crear el estado
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
@@ -17,10 +19,22 @@ const MainLayout = ({ children }) => {
     localStorage.setItem('darkMode', darkMode);
   }, [darkMode]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login';
+  const handleLogout = async () => {
+    const result = await MySwal.fire({
+      title: '¿Estás seguro de que deseas cerrar sesión?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Cerrar sesión',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
   };
 
   return (
@@ -84,46 +98,20 @@ const MainLayout = ({ children }) => {
             handleDiameter={22}
           />
           <ProfileMenu />
-          <button
-            type="button"
-            className="btn btn-outline-danger"
-            onClick={() => setShowLogoutModal(true)}
-          >
-            Cerrar sesión
-          </button>
+          {/* Icono de cerrar sesión */}
+          <MdLogout
+            size={26}
+            color="#dc3545"
+            style={{ cursor: 'pointer' }}
+            title="Cerrar sesión"
+            onClick={handleLogout}
+          />
         </div>
       </nav>
       <div style={{ display: 'flex' }}>
         <Sidebar />
         <main style={{ flex: 1, padding: '2rem' }}>{children}</main>
       </div>
-
-      {/* Modal de confirmación para cerrar sesión */}
-      <CustomModal
-        show={showLogoutModal}
-        onHide={() => setShowLogoutModal(false)}
-        title="Confirmar cierre de sesión"
-      >
-        <div>
-          <p>¿Estás seguro de que deseas cerrar sesión?</p>
-          <div className="d-flex justify-content-end gap-2 mt-3">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setShowLogoutModal(false)}
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={handleLogout}
-            >
-              Cerrar sesión
-            </button>
-          </div>
-        </div>
-      </CustomModal>
     </div>
   );
 };
