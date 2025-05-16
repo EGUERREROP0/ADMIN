@@ -10,6 +10,10 @@ import CustomModal from '../../components/Modal';
 import CustomButton from '../../components/Button/CustomButton';
 import Table from '../../components/Table/Table';
 import UserSearch from './UserSearch';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const EyeIcon = ({ style = {}, ...props }) => (
   <svg
@@ -40,17 +44,12 @@ const UserList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [convertingId, setConvertingId] = useState(null);
   const [incidentTypes, setIncidentTypes] = useState([]);
   const [showIncidentTypeModal, setShowIncidentTypeModal] = useState(false);
   const [incidentTypeId, setIncidentTypeId] = useState('');
   const [adminToAssign, setAdminToAssign] = useState(null);
   const [assigning, setAssigning] = useState(false);
-
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [userToConvert, setUserToConvert] = useState(null);
 
   const [search, setSearch] = useState('');
 
@@ -65,7 +64,12 @@ const UserList = () => {
     getUsers(searchValue)
       .then(data => setUsers(Array.isArray(data) ? data : []))
       .catch(() => {
-        setError('No tienes permisos para ver la lista de usuarios.');
+        MySwal.fire({
+          title: 'Sin permisos',
+          text: 'No tienes permisos para ver la lista de usuarios.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
         setUsers([]);
       })
       .finally(() => setLoading(false));
@@ -76,20 +80,40 @@ const UserList = () => {
       fetchUsers();
     } else {
       setLoading(false);
-      setError('No tienes permisos para ver la lista de usuarios.');
+      MySwal.fire({
+        title: 'Sin permisos',
+        text: 'No tienes permisos para ver la lista de usuarios.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
       setUsers([]);
     }
-   
-  }, [roleId, success]);
+    // eslint-disable-next-line
+  }, [roleId]);
 
   const handleSearch = (value) => {
     setSearch(value);
     fetchUsers(value);
   };
 
+  // SweetAlert2 para confirmar conversión
+  const handleConvertToAdminWithConfirm = async (user) => {
+    const result = await MySwal.fire({
+      title: 'Confirmar conversión',
+      html: `¿Estás seguro de convertir a <b>${user.first_name} ${user.last_name}</b> a admin?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#ffc107',
+      cancelButtonColor: '#495057'
+    });
+    if (result.isConfirmed) {
+      await handleConvertToAdmin(user.id);
+    }
+  };
+
   const handleConvertToAdmin = async (id) => {
-    setError('');
-    setSuccess('');
     setConvertingId(id);
     try {
       await convertToAdmin(id);
@@ -97,37 +121,54 @@ const UserList = () => {
       setIncidentTypes(Array.isArray(types) ? types : []);
       setAdminToAssign(id);
       setShowIncidentTypeModal(true);
-      setSuccess('Usuario convertido a admin correctamente. Ahora asigna el tipo de incidente.');
+      await MySwal.fire({
+        title: '¡Éxito!',
+        text: 'Usuario convertido a admin correctamente. Ahora asigna el tipo de incidente.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
       fetchUsers(search);
     } catch {
-      setError('No se pudo convertir el usuario a admin.');
+      await MySwal.fire({
+        title: 'Error',
+        text: 'No se pudo convertir el usuario a admin.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
     } finally {
       setConvertingId(null);
     }
   };
 
-  const handleConfirmConvert = async () => {
-    if (!userToConvert) return;
-    setShowConfirmModal(false);
-    await handleConvertToAdmin(userToConvert.id);
-    setUserToConvert(null);
-  };
-
   const handleAssignIncidentType = async () => {
     if (!incidentTypeId) {
-      setError('Selecciona un tipo de incidente.');
+      await MySwal.fire({
+        title: 'Advertencia',
+        text: 'Selecciona un tipo de incidente.',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
       return;
     }
-    setError('');
     setAssigning(true);
     try {
       await assignIncidentTypeToAdmin(adminToAssign, incidentTypeId);
-      setSuccess('Tipo de incidente asignado correctamente.');
+      await MySwal.fire({
+        title: '¡Éxito!',
+        text: 'Tipo de incidente asignado correctamente.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
       setShowIncidentTypeModal(false);
       setIncidentTypeId('');
       setAdminToAssign(null);
     } catch {
-      setError('No se pudo asignar el tipo de incidente.');
+      await MySwal.fire({
+        title: 'Error',
+        text: 'No se pudo asignar el tipo de incidente.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
     } finally {
       setAssigning(false);
     }
@@ -137,7 +178,6 @@ const UserList = () => {
     setShowIncidentTypeModal(false);
     setIncidentTypeId('');
     setAdminToAssign(null);
-    setError('');
   };
 
   const getRoleStyle = (role) => {
@@ -256,10 +296,7 @@ const UserList = () => {
                 border: `1.5px solid ${palette.celeste}`,
                 marginLeft: 0
               }}
-              onClick={() => {
-                setUserToConvert(u);
-                setShowConfirmModal(true);
-              }}
+              onClick={() => handleConvertToAdminWithConfirm(u)}
               disabled={convertingId === u.id}
             >
               {convertingId === u.id ? 'Convirtiendo...' : 'Convertir a admin'}
@@ -290,26 +327,21 @@ const UserList = () => {
             <div className="spinner-border text-info me-2" role="status" />
             <span style={{ color: palette.celeste }}>Cargando...</span>
           </div>
-        ) : error ? (
-          <div className="alert alert-danger mt-4">{error}</div>
         ) : (
-          <>
-            {success && <div className="alert alert-success">{success}</div>}
-            <Table
-              columns={columns}
-              data={users}
-              rowKey="id"
-              loading={loading}
-              headerStyle={{
-                background: tableHeaderColor,
-                color: '#fff'
-              }}
-              rowStyle={(_, idx) => ({
-                background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
-                color: tableTextColor
-              })}
-            />
-          </>
+          <Table
+            columns={columns}
+            data={users}
+            rowKey="id"
+            loading={loading}
+            headerStyle={{
+              background: tableHeaderColor,
+              color: '#fff'
+            }}
+            rowStyle={(_, idx) => ({
+              background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
+              color: tableTextColor
+            })}
+          />
         )}
       </div>
 
@@ -327,35 +359,6 @@ const UserList = () => {
             <p><b>Estado:</b> {selectedUser.is_active ? 'Activo' : 'Inactivo'}</p>
           </div>
         )}
-      </CustomModal>
-
-      {/* Modal de confirmación personalizado */}
-      <CustomModal
-        show={showConfirmModal}
-        onHide={() => setShowConfirmModal(false)}
-        title="Confirmar conversión"
-      >
-        <div>
-          <p>
-            ¿Estás seguro de convertir a <b>{userToConvert?.first_name} {userToConvert?.last_name}</b> a admin?
-          </p>
-          <div className="d-flex justify-content-end gap-2 mt-3">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setShowConfirmModal(false)}
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              className="btn btn-warning"
-              onClick={handleConfirmConvert}
-            >
-              Confirmar
-            </button>
-          </div>
-        </div>
       </CustomModal>
 
       {/* Modal para asignar tipo de incidente */}
@@ -386,7 +389,6 @@ const UserList = () => {
           >
             {assigning ? 'Asignando...' : 'Asignar'}
           </button>
-          {error && <div className="alert alert-danger mt-3">{error}</div>}
         </div>
       </CustomModal>
       {/* Estilos para modo oscuro en tablas y módulo */}
