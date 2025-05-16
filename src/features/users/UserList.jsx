@@ -7,7 +7,6 @@ import {
 } from './userService';
 import MainLayout from '../../layouts/MainLayout';
 import CustomModal from '../../components/Modal';
-import CustomButton from '../../components/Button/CustomButton';
 import Table from '../../components/Table/Table';
 import UserSearch from './UserSearch';
 import Swal from 'sweetalert2';
