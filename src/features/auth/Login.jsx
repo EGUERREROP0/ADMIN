@@ -57,7 +57,7 @@ const Login = () => {
             <div className="text-center mb-4">
               <img src={logo} alt="Logo" style={{ width: 70 }} />
               <h5 className="mt-3" style={{ color: '#00AEEF', fontWeight: 600 }}>
-                Hola, bienvenido de nuevo
+                Mesa de Ayuda
               </h5>
             </div>
             <form onSubmit={handleSubmit}>

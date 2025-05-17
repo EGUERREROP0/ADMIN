@@ -101,7 +101,7 @@ const AdminList = () => {
         <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Administradores</h3>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
           <CustomButton onClick={() => setShowModal(true)}>
-            Agregar administrador
+            + Agregar administrador
           </CustomButton>
         </div>
         <Table

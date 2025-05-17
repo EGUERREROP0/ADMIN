@@ -176,8 +176,13 @@ const IncidentList = () => {
       key: 'reportado',
       title: 'Reportado por',
       render: (inc) =>
-        inc.user
-          ? `${inc.user.first_name || ''} ${inc.user.last_name || ''}`.trim() || '-'
+        inc.app_user_incident_user_idToapp_user
+          ? (
+              <div>
+                <div>{`${inc.app_user_incident_user_idToapp_user.first_name || ''} ${inc.app_user_incident_user_idToapp_user.last_name || ''}`.trim() || '-'}</div>
+                <div style={{ fontSize: 13, color: '#888' }}>{inc.app_user_incident_user_idToapp_user.email || ''}</div>
+              </div>
+            )
           : '-'
     },
     {
@@ -207,7 +212,12 @@ const IncidentList = () => {
           color: tableTextColor
         }}
       >
-        <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Incidentes</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <h3 style={{ color: palette.celeste, fontWeight: 700, margin: 0 }}>
+            Incidentes
+          </h3>
+          <span role="img" aria-label="Saludo" style={{ fontSize: 32, marginTop: 2 }}>👋</span>
+        </div>
         <IncidentFilters
           prioridad={prioridad}
           setPrioridad={setPrioridad}
