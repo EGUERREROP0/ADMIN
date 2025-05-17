@@ -5,6 +5,7 @@ import { UserList } from '../features/users';
 import IncidentList from '../features/incidents/IncidentList';
 import Dashboard from '../features/dashboard/Dashboard';
 import AdminList from '../features/admins/AdminList';
+import TypeIncidentList from '../features/incidents/TypeIncidentList';
 
 // Ruta privada que valida token y rol
 const PrivateRoute = ({ children, onlySuperadmin = false }) => {
@@ -54,6 +55,14 @@ const AppRouter = () => (
           </PrivateRoute>
         }
       />
+<Route
+  path="/tipos-incidente"
+  element={
+    <PrivateRoute onlySuperadmin={true}>
+      <TypeIncidentList />
+    </PrivateRoute>
+  }
+/>
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   </BrowserRouter>

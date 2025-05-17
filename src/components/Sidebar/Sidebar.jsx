@@ -5,6 +5,7 @@ import dashboardIcon from '../../assets/iconos/dashboard.png';
 import usuariosIcon from '../../assets/iconos/usuarios.png';
 import incidentesIcon from '../../assets/iconos/incidentes.png';
 import adminsIcon from '../../assets/iconos/admins.png';
+import tiposIncidentesIcon from '../../assets/iconos/tipo_incidente.png';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -34,6 +35,11 @@ const Sidebar = () => {
       to: '/administradores',
       label: 'Administradores',
       icon: <img src={adminsIcon} alt="Administradores" style={{ width: 22, marginRight: 12 }} />
+    });
+    sidebarLinks.push({
+      to: '/tipos-incidente',
+      label: 'Tipos incidente',
+      icon: <img src={tiposIncidentesIcon} alt="Tipos de incidente" style={{ width: 22, marginRight: 12 }} />
     });
   }
 
