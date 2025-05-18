@@ -34,3 +34,7 @@ export const getIncidentTypes = async () => {
   const response = await api.get('/type-incident');
   return Array.isArray(response.data) ? response.data : [];
 };
+
+export const deleteIncident = async (incidentId) => {
+  return api.delete(`/incident/${incidentId}`);
+};

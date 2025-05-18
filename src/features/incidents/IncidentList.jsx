@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   getIncidents,
   getIncidentStatuses,
   updateIncidentStatus,
-  getIncidentTypes
+  getIncidentTypes,
+  deleteIncident
 } from './incidentService';
 import MainLayout from '../../layouts/MainLayout';
 import CustomModal from '../../components/Modal';
@@ -11,6 +12,11 @@ import CustomButton from '../../components/Button/CustomButton';
 import Table from '../../components/Table/Table';
 import IncidentFilters from './IncidentFilters';
 import IncidentCards from './IncidentCards';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import { FaEllipsisV, FaTrash, FaPen } from 'react-icons/fa';
+
+const MySwal = withReactContent(Swal);
 
 const palette = {
   celeste: '#00AEEF',
@@ -21,7 +27,8 @@ const palette = {
   azul: '#2196F3',
   verde: '#43A047',
   grisOscuro: '#757575',
-  naranja: '#FF9800'
+  naranja: '#FF9800',
+  rojo: '#e53935'
 };
 
 const statusColors = {
@@ -38,6 +45,97 @@ const tableRowEven = 'var(--color-table-row-even, #f6f7fb)';
 const tableRowOdd = 'var(--color-table-row-odd, #fff)';
 const tableTextColor = 'var(--color-text, #222)';
 const moduleBg = 'var(--color-module, #f8f9fa)';
+
+// Dropdown de acciones
+const ActionMenu = ({ onChangeStatus, onDelete }) => {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef();
+
+  // Cierra el menú si se hace clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div style={{ position: 'relative', display: 'inline-block' }} ref={menuRef}>
+      <button
+        type="button"
+        style={{
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 6,
+          borderRadius: 6
+        }}
+        onClick={() => setOpen((v) => !v)}
+        title="Acciones"
+      >
+        <FaEllipsisV size={22} color={palette.celeste} />
+      </button>
+      {open && (
+        <div
+          style={{
+            position: 'absolute',
+            right: 0,
+            zIndex: 10,
+            minWidth: 170,
+            background: '#fff',
+            borderRadius: 18,
+            boxShadow: '0 4px 16px #00AEEF22',
+            marginTop: 8,
+            overflow: 'hidden'
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => { setOpen(false); onChangeStatus(); }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              background: palette.grisMedio,
+              color: palette.celeste,
+              border: 'none',
+              padding: '18px 20px',
+              fontSize: 20,
+              fontWeight: 500,
+              cursor: 'pointer',
+              borderBottom: '1px solid #f0f0f0'
+            }}
+          >
+            <FaPen style={{ marginRight: 12 }} />
+            Cambiar estado
+          </button>
+          <button
+            type="button"
+            onClick={() => { setOpen(false); onDelete(); }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              background: '#fff0f0',
+              color: palette.rojo,
+              border: 'none',
+              padding: '18px 20px',
+              fontSize: 20,
+              fontWeight: 500,
+              cursor: 'pointer'
+            }}
+          >
+            <FaTrash style={{ marginRight: 12 }} />
+            Eliminar
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const IncidentList = () => {
   const [incidents, setIncidents] = useState([]);
@@ -111,6 +209,28 @@ const IncidentList = () => {
       setError('No se pudo actualizar el estado.');
     } finally {
       setUpdating(false);
+    }
+  };
+
+  // Eliminar incidente con confirmación
+  const handleDeleteIncident = async (incident) => {
+    const result = await MySwal.fire({
+      title: '¿Eliminar incidente?',
+      html: `¿Seguro que deseas eliminar el incidente <b>ID ${incident.id}</b>?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: palette.rojo,
+      cancelButtonColor: '#495057'
+    });
+    if (!result.isConfirmed) return;
+    try {
+      await deleteIncident(incident.id);
+      await MySwal.fire('Eliminado', 'Incidente eliminado correctamente.', 'success');
+      fetchIncidents();
+    } catch {
+      await MySwal.fire('Error', 'No se pudo eliminar el incidente.', 'error');
     }
   };
 
@@ -189,12 +309,10 @@ const IncidentList = () => {
       key: 'acciones',
       title: 'Acciones',
       render: (inc) => (
-        <CustomButton
-          type="button"
-          onClick={() => handleOpenStatusModal(inc)}
-        >
-          Cambiar estado
-        </CustomButton>
+        <ActionMenu
+          onChangeStatus={() => handleOpenStatusModal(inc)}
+          onDelete={() => handleDeleteIncident(inc)}
+        />
       )
     }
   ];

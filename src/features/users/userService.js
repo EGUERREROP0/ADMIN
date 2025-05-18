@@ -20,3 +20,7 @@ export const getIncidentTypes = async () => {
 export const assignIncidentTypeToAdmin = async (adminId, incidentTypeId) => {
   return api.post(`/admin/${adminId}`, { incident_type_id: incidentTypeId });
 };
+
+export const deleteUser = async (id) => {
+  return api.delete(`/user/${id}`);
+};

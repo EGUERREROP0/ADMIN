@@ -3,7 +3,8 @@ import {
   getUsers,
   convertToAdmin,
   getIncidentTypes,
-  assignIncidentTypeToAdmin
+  assignIncidentTypeToAdmin,
+  deleteUser
 } from './userService';
 import MainLayout from '../../layouts/MainLayout';
 import CustomModal from '../../components/Modal';
@@ -11,6 +12,7 @@ import Table from '../../components/Table/Table';
 import UserSearch from './UserSearch';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { FaTrash } from 'react-icons/fa';
 
 const MySwal = withReactContent(Swal);
 
@@ -36,7 +38,8 @@ const palette = {
   celeste: '#00AEEF',
   blanco: '#fff',
   grisClaro: '#f8f9fa',
-  grisMedio: '#e6f7fb'
+  grisMedio: '#e6f7fb',
+  rojo: '#e53935'
 };
 
 const UserList = () => {
@@ -179,6 +182,27 @@ const UserList = () => {
     setAdminToAssign(null);
   };
 
+  const handleDeleteUser = async (user) => {
+    const result = await MySwal.fire({
+      title: '¿Eliminar usuario?',
+      html: `¿Seguro que deseas eliminar a <b>${user.first_name} ${user.last_name}</b>?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: palette.rojo,
+      cancelButtonColor: '#495057'
+    });
+    if (!result.isConfirmed) return;
+    try {
+      await deleteUser(user.id);
+      await MySwal.fire('Eliminado', 'Usuario eliminado correctamente.', 'success');
+      fetchUsers(search);
+    } catch {
+      await MySwal.fire('Error', 'No se pudo eliminar el usuario.', 'error');
+    }
+  };
+
   const getRoleStyle = (role) => {
     const name = typeof role === 'object' ? role.name : role;
     if (name === 'user') {
@@ -299,6 +323,22 @@ const UserList = () => {
               disabled={convertingId === u.id}
             >
               {convertingId === u.id ? 'Convirtiendo...' : 'Convertir a admin'}
+            </button>
+          )}
+          {roleId === 3 && (
+            <button
+              type="button"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                marginLeft: 8,
+                cursor: 'pointer',
+                padding: 0
+              }}
+              title="Eliminar usuario"
+              onClick={() => handleDeleteUser(u)}
+            >
+              <FaTrash size={20} color={palette.rojo} />
             </button>
           )}
         </>
