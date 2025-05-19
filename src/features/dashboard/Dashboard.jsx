@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Typewriter } from 'react-simple-typewriter';
-import palette from './utils/palette';
+import palette from '../../utils/palette';
 import EstadoBarChart from './components/EstadoBarChart';
 import PrioridadPieChart from './components/PrioridadPieChart';
 import { useDashboardData } from './hooks/useDashboardData';

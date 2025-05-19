@@ -1,10 +1,10 @@
 import React from 'react';
-import palette from '../utils/palette';
+import palette from '../../../utils/palette';
 
 export const adminTableColumns = () => [
   {
     key: 'name',
-    title: 'Nombre',
+    title: 'NOMBRE',
     render: (u) => (
       <span style={{ fontWeight: 600 }}>
         {u.first_name} {u.last_name}
@@ -13,12 +13,12 @@ export const adminTableColumns = () => [
   },
   {
     key: 'email',
-    title: 'Correo',
+    title: 'CORREO',
     dataIndex: 'email'
   },
   {
     key: 'estado',
-    title: 'Estado',
+    title: 'ESTADO',
     render: (u) => (
       <span
         style={{
@@ -36,7 +36,7 @@ export const adminTableColumns = () => [
   },
   {
     key: 'tipo',
-    title: 'Tipo de incidente',
+    title: 'TIPO INCIDENTE',
     render: (u) =>
       u.incident_type?.name ||
       u.incident_type_name ||

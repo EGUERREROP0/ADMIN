@@ -7,7 +7,23 @@ import {
   createIncidentType,
   deleteIncidentType
 } from './services/typeIncidentService';
-import palette from './utils/palette';
+import palette from '../../utils/palette';
+import CustomButton from '../../components/Button/CustomButton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+  Typography,
+  IconButton,
+} from '@mui/material';
+
+const tableRowEven = '#f4f8fb';
+const tableRowOdd = '#fff';
 
 const TypeIncidentList = () => {
   const [types, setTypes] = useState([]);
@@ -68,75 +84,105 @@ const TypeIncidentList = () => {
 
   return (
     <MainLayout>
-      <div style={{ maxWidth: 600, margin: '2rem auto', background: palette.blanco, borderRadius: 12, boxShadow: '0 2px 8px #00AEEF22', padding: 32 }}>
-        <h2 style={{ color: palette.celeste, marginBottom: 24 }}>Tipos de Incidente</h2>
+      <div style={{
+        maxWidth: 600,
+        margin: '2rem auto',
+        background: palette.blanco,
+        borderRadius: 12,
+        boxShadow: '0 2px 8px #00AEEF22',
+        padding: 32
+      }}>
+        <h2 style={{
+          color: palette.celeste,
+          marginBottom: 24,
+          fontFamily: 'Nunito, Arial, sans-serif'
+        }}>
+          Tipos de Incidente
+        </h2>
         <form onSubmit={handleAddType} style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
           <input
             type="text"
             placeholder="Nuevo tipo de incidente"
             value={newType}
             onChange={e => setNewType(e.target.value)}
-            style={{ flex: 1, padding: 8, borderRadius: 6, border: '1px solid #ccc', fontSize: 16 }}
-          />
-          <button
-            type="submit"
             style={{
-              background: palette.celeste,
-              color: palette.blanco,
-              border: 'none',
+              flex: 1,
+              padding: 8,
               borderRadius: 6,
-              padding: '8px 18px',
-              fontWeight: 600,
+              border: '1px solid #ccc',
               fontSize: 16,
-              cursor: 'pointer'
+              fontFamily: 'Nunito, Arial, sans-serif'
             }}
-          >
+          />
+          <CustomButton type="submit">
             Agregar
-          </button>
+          </CustomButton>
         </form>
         {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}
-        {loading ? (
-          <div>Cargando...</div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: palette.grisClaro }}>
-            <thead>
-              <tr style={{ background: palette.celeste, color: palette.blanco }}>
-                <th style={{ padding: 10, borderRadius: '8px 0 0 0' }}>ID</th>
-                <th style={{ padding: 10 }}>Nombre</th>
-                <th style={{ padding: 10, borderRadius: '0 8px 0 0' }}>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {types.map(type => (
-                <tr key={type.id} style={{ background: palette.blanco }}>
-                  <td style={{ padding: 10, textAlign: 'center' }}>{type.id}</td>
-                  <td style={{ padding: 10 }}>{type.name}</td>
-                  <td style={{ padding: 10, textAlign: 'center' }}>
-                    <button
-                      onClick={() => handleDelete(type.id)}
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: 0
-                      }}
-                      title="Eliminar"
-                    >
-                      <FaTrash size={22} color={palette.rojo} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {types.length === 0 && (
-                <tr>
-                  <td colSpan={3} style={{ padding: 16, textAlign: 'center', color: palette.grisOscuro }}>
-                    No hay tipos de incidente registrados.
-                  </td>
-                </tr>
+        <TableContainer
+          component={Paper}
+          sx={{
+            borderRadius: 1,
+            boxShadow: '0 4px 16px #b0b8c1aa',
+            mt: 2,
+            fontFamily: 'Nunito, Arial, sans-serif',
+          }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow sx={{ background: palette.celeste }}>
+                <TableCell sx={{ color: '#fff', fontWeight: 700 }}>#</TableCell>
+                <TableCell sx={{ color: '#fff', fontWeight: 700 }}>NOMBRE</TableCell>
+                <TableCell sx={{ color: '#fff', fontWeight: 700 }}>ACCIONES</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    <CircularProgress color="primary" />
+                  </TableCell>
+                </TableRow>
+              ) : types.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    <Typography color="text.secondary" sx={{ py: 3 }}>
+                      No hay tipos de incidente registrados.
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                types.map((type, idx) => (
+                  <TableRow
+                    key={type.id}
+                    sx={{
+                      background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
+                      color: '#232323',
+                      '&:last-child td, &:last-child th': { border: 0 },
+                    }}
+                  >
+                    <TableCell align="center">{type.id}</TableCell>
+                    <TableCell>{type.name}</TableCell>
+                    <TableCell align="center">
+                      <IconButton
+                        onClick={() => handleDelete(type.id)}
+                        title="Eliminar"
+                        sx={{
+                          color: palette.rojo,
+                          '&:hover': {
+                            background: palette.grisClaro
+                          }
+                        }}
+                      >
+                        <FaTrash size={20} />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
-            </tbody>
-          </table>
-        )}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </MainLayout>
   );

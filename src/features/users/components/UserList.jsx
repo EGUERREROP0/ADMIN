@@ -11,7 +11,7 @@ import {
   assignIncidentTypeToAdmin,
   deleteUser
 } from '../services/userService';
-import palette from '../utils/palette';
+import palette from '../../../utils/palette';
 import UserTable from './UserTable';
 
 const MySwal = withReactContent(Swal);

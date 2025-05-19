@@ -1,7 +1,17 @@
 import React from 'react';
-import Table from '../../../components/Table/Table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+  Typography,
+} from '@mui/material';
 import UserActions from './UserActions';
-import palette from '../utils/palette';
+import palette from '../../../utils/palette';
 
 const getRoleStyle = (role) => {
   const name = typeof role === 'object' ? role.name : role;
@@ -47,90 +57,103 @@ const UserTable = ({
   convertingId,
   handleDeleteUser
 }) => {
-  const columns = [
-    {
-      key: 'name',
-      title: 'Nombre',
-      render: (u) => (
-        <span style={{ fontWeight: 600 }}>
-          {u.first_name} {u.last_name}
-        </span>
-      )
-    },
-    {
-      key: 'email',
-      title: 'Correo',
-      dataIndex: 'email'
-    },
-    {
-      key: 'rol',
-      title: 'Rol',
-      render: (u) => (
-        <span
-          style={{
-            ...getRoleStyle(u.user_role),
-            padding: '0.25rem 0.9rem',
-            borderRadius: 14,
-            fontWeight: 600,
-            fontSize: 15,
-            minWidth: 70,
-            display: 'inline-block',
-            textAlign: 'center'
-          }}
-        >
-          {typeof u.user_role === 'object' ? u.user_role.name : u.user_role}
-        </span>
-      )
-    },
-    {
-      key: 'estado',
-      title: 'Estado',
-      render: (u) => (
-        <span
-          style={{
-            background: u.is_active ? palette.grisMedio : '#f8d7da',
-            color: u.is_active ? palette.celeste : '#c82333',
-            padding: '0.25rem 0.75rem',
-            borderRadius: 12,
-            fontWeight: 600,
-            fontSize: 14
-          }}
-        >
-          {u.is_active ? 'Activo' : 'Inactivo'}
-        </span>
-      )
-    },
-    {
-      key: 'acciones',
-      title: 'Acciones',
-      render: (u) => (
-        <UserActions
-          user={u}
-          roleId={roleId}
-          onView={setSelectedUser}
-          onConvert={handleConvertToAdminWithConfirm}
-          convertingId={convertingId}
-          onDelete={handleDeleteUser}
-        />
-      )
-    }
-  ];
-
   return (
-    <Table
-      columns={columns}
-      data={users}
-      rowKey="id"
-      loading={loading}
-      headerStyle={{
-        background: tableHeaderColor,
-        color: '#fff'
+    <TableContainer
+      component={Paper}
+      sx={{
+        borderRadius: 1,
+        boxShadow: '0 4px 16px #b0b8c1aa',
+        mt: 2,
+        fontFamily: 'Nunito, Arial, sans-serif',
       }}
-      rowStyle={(_, idx) => ({
-        background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
-        color: tableTextColor
-      })}
-    />
+    >
+      <Table>
+        <TableHead>
+          <TableRow sx={{ background: tableHeaderColor }}>
+            <TableCell sx={{ color: '#fff', fontWeight: 700 }}>NOMBRE</TableCell>
+            <TableCell sx={{ color: '#fff', fontWeight: 700 }}>CORREO</TableCell>
+            <TableCell sx={{ color: '#fff', fontWeight: 700 }}>ROL</TableCell>
+            <TableCell sx={{ color: '#fff', fontWeight: 700 }}>ESTADO</TableCell>
+            <TableCell sx={{ color: '#fff', fontWeight: 700 }}>ACCIONES</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                <CircularProgress color="primary" />
+              </TableCell>
+            </TableRow>
+          ) : users.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                <Typography color="text.secondary" sx={{ py: 3 }}>
+                  No hay usuarios registrados.
+                </Typography>
+              </TableCell>
+            </TableRow>
+          ) : (
+            users.map((u, idx) => (
+              <TableRow
+                key={u.id}
+                sx={{
+                  background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
+                  color: tableTextColor,
+                  '&:last-child td, &:last-child th': { border: 0 },
+                }}
+              >
+                <TableCell>
+                  <span style={{ fontWeight: 600 }}>
+                    {u.first_name} {u.last_name}
+                  </span>
+                </TableCell>
+                <TableCell>{u.email}</TableCell>
+                <TableCell>
+                  <span
+                    style={{
+                      ...getRoleStyle(u.user_role),
+                      padding: '0.25rem 0.9rem',
+                      borderRadius: 14,
+                      fontWeight: 600,
+                      fontSize: 15,
+                      minWidth: 70,
+                      display: 'inline-block',
+                      textAlign: 'center'
+                    }}
+                  >
+                    {typeof u.user_role === 'object' ? u.user_role.name : u.user_role}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span
+                    style={{
+                      background: u.is_active ? palette.grisMedio : '#f8d7da',
+                      color: u.is_active ? palette.celeste : '#c82333',
+                      padding: '0.25rem 0.75rem',
+                      borderRadius: 12,
+                      fontWeight: 600,
+                      fontSize: 14
+                    }}
+                  >
+                    {u.is_active ? 'Activo' : 'Inactivo'}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <UserActions
+                    user={u}
+                    roleId={roleId}
+                    onView={setSelectedUser}
+                    onConvert={handleConvertToAdminWithConfirm}
+                    convertingId={convertingId}
+                    onDelete={handleDeleteUser}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

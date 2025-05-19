@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaEllipsisV, FaTrash, FaPen, FaInfoCircle } from 'react-icons/fa';
-import palette from '../utils/palette';
+import palette from '../../../utils/palette';
 
 const ActionMenu = ({ onChangeStatus, onDelete, onDetail }) => {
   const [open, setOpen] = useState(false);

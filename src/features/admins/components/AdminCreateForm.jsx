@@ -77,7 +77,7 @@ const AdminCreateForm = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
-      <h3>Registrar nuevo administrador</h3>
+      
       <div>
         <label style={labelStyle}>Nombre</label>
         <CustomInput
@@ -136,7 +136,7 @@ const AdminCreateForm = ({ onSuccess }) => {
         </select>
       </div>
       <div style={{ marginTop: 16 }}>
-        <CustomButton type="submit">
+        <CustomButton type="submit" style={{ width: '100%' }}>
           Registrar
         </CustomButton>
       </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar, Cell } from 'recharts';
 import barColors from '../utils/barColors';
-import palette from '../utils/palette';
+import palette from '../../../utils/palette';
 
 const EstadoBarChart = ({ data }) => (
   <div style={{

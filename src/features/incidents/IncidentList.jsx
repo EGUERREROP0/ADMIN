@@ -5,7 +5,7 @@ import IncidentCards from './components/IncidentCards';
 import IncidentDetailModal from './components/IncidentDetailModal';
 import IncidentStatusModal from './components/IncidentStatusModal';
 import { useIncidentList } from './hooks/useIncidentList';
-import palette from './utils/palette';
+import palette from '../../utils/palette';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import IncidentTable from './components/IncidentTable';

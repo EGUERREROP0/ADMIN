@@ -1,7 +1,7 @@
 import React from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import barColors from '../utils/barColors';
-import palette from '../utils/palette';
+import palette from '../../../utils/palette';
 
 const PrioridadPieChart = ({
   data,

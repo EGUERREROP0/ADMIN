@@ -1,4 +1,4 @@
-import palette from './palette';
+import palette from '../../../utils/palette';
 
 const statusColors = {
   pendiente: palette.amarillo,

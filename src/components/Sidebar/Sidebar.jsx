@@ -1,5 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Paper from '@mui/material/Paper';
+import palette from '../../utils/palette';
 
 import dashboardIcon from '../../assets/iconos/dashboard.png';
 import usuariosIcon from '../../assets/iconos/usuarios.png';
@@ -16,17 +23,17 @@ const Sidebar = () => {
     {
       to: '/dashboard',
       label: 'Dashboard',
-      icon: <img src={dashboardIcon} alt="Dashboard" style={{ width: 22, marginRight: 12 }} />
+      icon: <img src={dashboardIcon} alt="Dashboard" style={{ width: 22 }} />
     },
     {
       to: '/usuarios',
       label: 'Usuarios',
-      icon: <img src={usuariosIcon} alt="Usuarios" style={{ width: 22, marginRight: 12 }} />
+      icon: <img src={usuariosIcon} alt="Usuarios" style={{ width: 22 }} />
     },
     {
       to: '/incidentes',
       label: 'Incidentes',
-      icon: <img src={incidentesIcon} alt="Incidentes" style={{ width: 22, marginRight: 12 }} />
+      icon: <img src={incidentesIcon} alt="Incidentes" style={{ width: 22 }} />
     }
   ];
 
@@ -34,53 +41,68 @@ const Sidebar = () => {
     sidebarLinks.push({
       to: '/administradores',
       label: 'Administradores',
-      icon: <img src={adminsIcon} alt="Administradores" style={{ width: 22, marginRight: 12 }} />
+      icon: <img src={adminsIcon} alt="Administradores" style={{ width: 22 }} />
     });
     sidebarLinks.push({
       to: '/tipos-incidente',
       label: 'Tipos incidente',
-      icon: <img src={tiposIncidentesIcon} alt="Tipos de incidente" style={{ width: 22, marginRight: 12 }} />
+      icon: <img src={tiposIncidentesIcon} alt="Tipos de incidente" style={{ width: 22 }} />
     });
   }
 
   return (
-    <aside
-      className="sidebar-fixed"
-      style={{
+    <Paper
+      elevation={2}
+      sx={{
         width: 220,
         minHeight: 'calc(100vh - 56px)',
-        boxShadow: '2px 0 8px #00AEEF11',
-        padding: '2rem 0.5rem',
-        background: 'var(--color-sidebar)',
+        p: '2rem 0.5rem',
+        bgcolor: 'var(--color-sidebar, #fff)',
+        borderRadius: 0,
+        boxShadow: '2px 0 8px #b0b8c122',
         transition: 'background 0.3s'
       }}
+      component="aside"
     >
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+      <List sx={{ p: 0 }}>
         {sidebarLinks.map(link => (
-          <li key={link.to}>
-            <Link
-              to={link.to}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '0.75rem 1.5rem',
-                color: location.pathname === link.to ? '#00AEEF' : 'var(--color-text)',
-                fontWeight: location.pathname === link.to ? 700 : 500,
-                background: location.pathname === link.to ? '#e6f7fb' : 'transparent',
-                borderRadius: 8,
-                textDecoration: 'none',
-                marginBottom: 8,
-                fontSize: 17,
-                transition: 'color 0.3s, background 0.3s'
-              }}
-            >
+          <ListItemButton
+            key={link.to}
+            component={Link}
+            to={link.to}
+            selected={location.pathname === link.to}
+            sx={{
+              mb: 1,
+              borderRadius: 2,
+              pl: 2,
+              pr: 2,
+              py: 1.2,
+              color: location.pathname === link.to ? palette.celeste : palette.grisOscuro,
+              fontWeight: location.pathname === link.to ? 700 : 500,
+              bgcolor: location.pathname === link.to ? palette.grisMedio : 'transparent',
+              fontSize: 17,
+              transition: 'color 0.3s, background 0.3s',
+              '&:hover': {
+                bgcolor: palette.grisMedio,
+                color: palette.celeste
+              }
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 32, color: 'inherit' }}>
               {link.icon}
-              {link.label}
-            </Link>
-          </li>
+            </ListItemIcon>
+            <ListItemText
+              primary={link.label}
+              primaryTypographyProps={{
+                fontWeight: location.pathname === link.to ? 700 : 500,
+                fontSize: 17,
+                fontFamily: 'Nunito, Arial, sans-serif'
+              }}
+            />
+          </ListItemButton>
         ))}
-      </ul>
-    </aside>
+      </List>
+    </Paper>
   );
 };
 

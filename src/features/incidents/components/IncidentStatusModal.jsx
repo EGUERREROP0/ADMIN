@@ -1,7 +1,7 @@
 import React from 'react';
 import CustomModal from '../../../components/Modal';
 import CustomButton from '../../../components/Button/CustomButton';
-import palette from '../utils/palette';
+import palette from '../../../utils/palette';
 
 const IncidentStatusModal = ({
   show,

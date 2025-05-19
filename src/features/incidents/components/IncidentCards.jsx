@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import palette from '../utils/palette';
+import palette from '../../../utils/palette';
 
 const IncidentCards = ({ incidents, onChangeStatus }) => {
   const [modalOpen, setModalOpen] = useState(false);
