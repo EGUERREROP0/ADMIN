@@ -1,5 +1,5 @@
 const palette = {
-    celeste: '#00AEEF',
+    celeste: '#009fc3',
     blanco: '#fff',
     grisClaro: '#f8f9fa',
     grisMedio: '#e6f7fb',
