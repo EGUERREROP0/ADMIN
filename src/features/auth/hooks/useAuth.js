@@ -10,7 +10,6 @@ export const useAuth = () => {
     setError('');
     try {
       const user = await loginService(credentials);
-      // Aquí puedes guardar el token/user en localStorage si lo necesitas
       return user;
     } catch (err) {
       console.error('Login error:', err);
