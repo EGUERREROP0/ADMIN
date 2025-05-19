@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
-import CustomButton from '../../components/Button/CustomButton';
-import CustomInput from '../../components/Input/CustomInput';
-import { createAdmin } from './adminService';
+import api from '../../../services/api';
+import CustomButton from '../../../components/Button/CustomButton';
+import CustomInput from '../../../components/Input/CustomInput';
+import { createAdmin } from '../services/adminService';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -58,7 +58,6 @@ const AdminCreateForm = ({ onSuccess }) => {
         password: '',
         incident_type_id: ''
       });
-      // Alerta SweetAlert2 de éxito
       await MySwal.fire({
         title: '¡Éxito!',
         text: 'Administrador creado correctamente.',
@@ -67,7 +66,6 @@ const AdminCreateForm = ({ onSuccess }) => {
       });
       if (onSuccess) onSuccess();
     } catch (err) {
-      // Alerta SweetAlert2 de error
       await MySwal.fire({
         title: 'Error',
         text: err?.response?.data?.error || 'Error al crear administrador',
@@ -142,7 +140,6 @@ const AdminCreateForm = ({ onSuccess }) => {
           Registrar
         </CustomButton>
       </div>
-      {/* Las alertas visuales ahora se muestran con SweetAlert2 */}
     </form>
   );
 };

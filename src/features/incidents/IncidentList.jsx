@@ -1,190 +1,52 @@
-import React, { useEffect, useState, useRef } from 'react';
-import {
-  getIncidents,
-  getIncidentStatuses,
-  updateIncidentStatus,
-  getIncidentTypes,
-  deleteIncident
-} from './incidentService';
+import React, { useState } from 'react';
 import MainLayout from '../../layouts/MainLayout';
-import CustomModal from '../../components/Modal';
-import CustomButton from '../../components/Button/CustomButton';
-import Table from '../../components/Table/Table';
-import IncidentFilters from './IncidentFilters';
-import IncidentCards from './IncidentCards';
+import IncidentFilters from './components/IncidentFilters';
+import IncidentCards from './components/IncidentCards';
+import IncidentDetailModal from './components/IncidentDetailModal';
+import IncidentStatusModal from './components/IncidentStatusModal';
+import { useIncidentList } from './hooks/useIncidentList';
+import palette from './utils/palette';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { FaEllipsisV, FaTrash, FaPen } from 'react-icons/fa';
+import IncidentTable from './components/IncidentTable';
 
 const MySwal = withReactContent(Swal);
 
-const palette = {
-  celeste: '#00AEEF',
-  blanco: '#fff',
-  grisClaro: '#f8f9fa',
-  grisMedio: '#e6f7fb',
-  amarillo: '#FFD600',
-  azul: '#2196F3',
-  verde: '#43A047',
-  grisOscuro: '#757575',
-  naranja: '#FF9800',
-  rojo: '#e53935'
-};
-
-const statusColors = {
-  pendiente: palette.amarillo,
-  en_progreso: palette.azul,
-  resuelto: palette.verde,
-  cerrado: palette.grisOscuro,
-  re_abierto: palette.naranja
-};
-
-// Variables para modo oscuro
-const tableHeaderColor = '#009fc3';
-const tableRowEven = 'var(--color-table-row-even, #f6f7fb)';
-const tableRowOdd = 'var(--color-table-row-odd, #fff)';
 const tableTextColor = 'var(--color-text, #222)';
 const moduleBg = 'var(--color-module, #f8f9fa)';
 
-// Dropdown de acciones
-const ActionMenu = ({ onChangeStatus, onDelete }) => {
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef();
-
-  // Cierra el menú si se hace clic fuera
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  return (
-    <div style={{ position: 'relative', display: 'inline-block' }} ref={menuRef}>
-      <button
-        type="button"
-        style={{
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          padding: 6,
-          borderRadius: 6
-        }}
-        onClick={() => setOpen((v) => !v)}
-        title="Acciones"
-      >
-        <FaEllipsisV size={22} color={palette.celeste} />
-      </button>
-      {open && (
-        <div
-          style={{
-            position: 'absolute',
-            right: 0,
-            zIndex: 10,
-            minWidth: 170,
-            background: '#fff',
-            borderRadius: 18,
-            boxShadow: '0 4px 16px #00AEEF22',
-            marginTop: 8,
-            overflow: 'hidden'
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => { setOpen(false); onChangeStatus(); }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              width: '100%',
-              background: palette.grisMedio,
-              color: palette.celeste,
-              border: 'none',
-              padding: '18px 20px',
-              fontSize: 20,
-              fontWeight: 500,
-              cursor: 'pointer',
-              borderBottom: '1px solid #f0f0f0'
-            }}
-          >
-            <FaPen style={{ marginRight: 12 }} />
-            Cambiar estado
-          </button>
-          <button
-            type="button"
-            onClick={() => { setOpen(false); onDelete(); }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              width: '100%',
-              background: '#fff0f0',
-              color: palette.rojo,
-              border: 'none',
-              padding: '18px 20px',
-              fontSize: 20,
-              fontWeight: 500,
-              cursor: 'pointer'
-            }}
-          >
-            <FaTrash style={{ marginRight: 12 }} />
-            Eliminar
-          </button>
-        </div>
-      )}
-    </div>
-  );
-};
-
 const IncidentList = () => {
-  const [incidents, setIncidents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  // Hook personalizado para lógica y datos
+  const {
+    incidents,
+    loading,
+    error,
+    statuses,
+    tiposIncidente,
+    prioridad,
+    setPrioridad,
+    estado,
+    setEstado,
+    tipo,
+    setTipo,
+    search,
+    setSearch,
+    fetchIncidents,
+    setError
+  } = useIncidentList();
+
+  // Estado para modales
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState(null);
-  const [statuses, setStatuses] = useState([]);
   const [newStatusId, setNewStatusId] = useState('');
   const [updating, setUpdating] = useState(false);
 
-  // Filtros
-  const [prioridad, setPrioridad] = useState('');
-  const [estado, setEstado] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [search, setSearch] = useState('');
-  const [tiposIncidente, setTiposIncidente] = useState([]);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [detailIncident, setDetailIncident] = useState(null);
 
-  // Vista: tabla o tarjetas
-  const [vista, setVista] = useState('tabla'); // 'tabla' o 'tarjetas'
+  const [success, setSuccess] = useState('');
 
-  useEffect(() => {
-    getIncidentStatuses()
-      .then(data => setStatuses(Array.isArray(data) ? data : []))
-      .catch(() => setError('No se pudieron cargar los estados.'));
-    getIncidentTypes()
-      .then(data => setTiposIncidente(Array.isArray(data) ? data : []))
-      .catch(() => setError('No se pudieron cargar los tipos.'));
-  }, []);
-
-  useEffect(() => {
-    fetchIncidents();
-    // eslint-disable-next-line
-  }, [prioridad, estado, tipo, search]);
-
-  const fetchIncidents = () => {
-    setLoading(true);
-    getIncidents({
-      priority: prioridad,
-      status_id: estado,
-      type_id: tipo,
-      search
-    })
-      .then(data => setIncidents(Array.isArray(data) ? data : []))
-      .catch(() => setError('No se pudieron cargar los incidentes.'))
-      .finally(() => setLoading(false));
-  };
-
+  // Handlers
   const handleOpenStatusModal = (incident) => {
     setSelectedIncident(incident);
     setError('');
@@ -201,7 +63,9 @@ const IncidentList = () => {
     setUpdating(true);
     setError('');
     try {
-      await updateIncidentStatus(selectedIncident.id, newStatusId);
+      await import('./services/incidentService').then(({ updateIncidentStatus }) =>
+        updateIncidentStatus(selectedIncident.id, newStatusId)
+      );
       setSuccess('Estado actualizado correctamente.');
       setShowStatusModal(false);
       fetchIncidents();
@@ -212,7 +76,6 @@ const IncidentList = () => {
     }
   };
 
-  // Eliminar incidente con confirmación
   const handleDeleteIncident = async (incident) => {
     const result = await MySwal.fire({
       title: '¿Eliminar incidente?',
@@ -226,7 +89,9 @@ const IncidentList = () => {
     });
     if (!result.isConfirmed) return;
     try {
-      await deleteIncident(incident.id);
+      await import('./services/incidentService').then(({ deleteIncident }) =>
+        deleteIncident(incident.id)
+      );
       await MySwal.fire('Eliminado', 'Incidente eliminado correctamente.', 'success');
       fetchIncidents();
     } catch {
@@ -234,88 +99,12 @@ const IncidentList = () => {
     }
   };
 
-  const columns = [
-    {
-      key: 'id',
-      title: 'ID',
-      dataIndex: 'id'
-    },
-    {
-      key: 'imagen',
-      title: 'Imagen',
-      render: (inc) =>
-        inc.image_url ? (
-          <img
-            src={inc.image_url}
-            alt="Incidente"
-            style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, border: '1px solid #eee' }}
-          />
-        ) : (
-          <span style={{ color: '#bbb', fontSize: 12 }}>Sin imagen</span>
-        )
-    },
-    {
-      key: 'tipo',
-      title: 'Tipo',
-      render: (inc) => inc.incident_type?.name || '-'
-    },
-    {
-      key: 'prioridad',
-      title: 'Prioridad',
-      render: (inc) => inc.priority?.name || inc.priority || '-'
-    },
-    {
-      key: 'estado',
-      title: 'Estado',
-      render: (inc) => {
-        const estado = inc.incident_status?.name || '-';
-        const color = statusColors[estado] || palette.celeste;
-        return (
-          <span
-            style={{
-              background: color,
-              color: '#fff',
-              padding: '0.25rem 0.75rem',
-              borderRadius: 12,
-              fontWeight: 600,
-              fontSize: 14,
-              textTransform: 'capitalize'
-            }}
-          >
-            {estado.replace('_', ' ')}
-          </span>
-        );
-      }
-    },
-    {
-      key: 'fecha',
-      title: 'Fecha',
-      render: (inc) => inc.report_date ? inc.report_date.slice(0, 10) : '-'
-    },
-    {
-      key: 'reportado',
-      title: 'Reportado por',
-      render: (inc) =>
-        inc.app_user_incident_user_idToapp_user
-          ? (
-              <div>
-                <div>{`${inc.app_user_incident_user_idToapp_user.first_name || ''} ${inc.app_user_incident_user_idToapp_user.last_name || ''}`.trim() || '-'}</div>
-                <div style={{ fontSize: 13, color: '#888' }}>{inc.app_user_incident_user_idToapp_user.email || ''}</div>
-              </div>
-            )
-          : '-'
-    },
-    {
-      key: 'acciones',
-      title: 'Acciones',
-      render: (inc) => (
-        <ActionMenu
-          onChangeStatus={() => handleOpenStatusModal(inc)}
-          onDelete={() => handleDeleteIncident(inc)}
-        />
-      )
-    }
-  ];
+  const handleShowDetail = (incident) => {
+    setDetailIncident(incident);
+    setShowDetailModal(true);
+  };
+
+  const [vista, setVista] = useState('tabla'); // 'tabla' o 'tarjetas'
 
   return (
     <MainLayout>
@@ -391,16 +180,12 @@ const IncidentList = () => {
           <>
             {success && <div className="alert alert-success">{success}</div>}
             {vista === 'tabla' ? (
-              <Table
-                columns={columns}
-                data={incidents}
-                rowKey="id"
+              <IncidentTable
+                incidents={incidents}
                 loading={loading}
-                headerStyle={{ background: tableHeaderColor, color: '#fff' }}
-                rowStyle={(_, idx) => ({
-                  background: idx % 2 === 1 ? tableRowEven : tableRowOdd,
-                  color: tableTextColor
-                })}
+                onChangeStatus={handleOpenStatusModal}
+                onDelete={handleDeleteIncident}
+                onDetail={handleShowDetail}
               />
             ) : (
               <IncidentCards
@@ -412,59 +197,24 @@ const IncidentList = () => {
         )}
 
         {/* Modal para cambiar estado */}
-        <CustomModal
+        <IncidentStatusModal
           show={showStatusModal}
           onHide={() => setShowStatusModal(false)}
-          title="Cambiar estado del incidente"
-        >
-          <div style={{ background: palette.grisClaro, borderRadius: 8, padding: 16 }}>
-            <p>
-              <b>Incidente ID:</b> {selectedIncident?.id}
-            </p>
-            <label style={{ color: palette.celeste, fontWeight: 600 }}>
-              Nuevo estado:
-            </label>
-            <select
-              className="form-select mt-2"
-              value={newStatusId}
-              onChange={e => setNewStatusId(e.target.value)}
-              style={{ borderColor: palette.celeste, fontWeight: 500 }}
-              disabled={updating}
-            >
-              <option value="">Selecciona...</option>
-              {statuses.map(status => (
-                <option key={status.id} value={status.id}>
-                  {status.name.charAt(0).toUpperCase() + status.name.slice(1).replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-            <div className="d-flex justify-content-end gap-2 mt-4">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => setShowStatusModal(false)}
-                disabled={updating}
-              >
-                Cancelar
-              </button>
-              <CustomButton
-                type="button"
-                onClick={handleUpdateStatus}
-                disabled={updating}
-              >
-                {updating ? (
-                  <span>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" />
-                    Actualizando...
-                  </span>
-                ) : (
-                  'Actualizar'
-                )}
-              </CustomButton>
-            </div>
-            {error && <div className="alert alert-danger mt-3">{error}</div>}
-          </div>
-        </CustomModal>
+          incident={selectedIncident}
+          statuses={statuses}
+          newStatusId={newStatusId}
+          setNewStatusId={setNewStatusId}
+          updating={updating}
+          onUpdateStatus={handleUpdateStatus}
+          error={error}
+        />
+
+        {/* Modal de detalle de incidente */}
+        <IncidentDetailModal
+          show={showDetailModal}
+          onHide={() => setShowDetailModal(false)}
+          incident={detailIncident}
+        />
       </div>
       {/* Estilos para modo oscuro en tablas y módulo */}
       <style>

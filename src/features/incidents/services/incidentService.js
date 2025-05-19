@@ -1,4 +1,4 @@
-import api from '../../services/api';
+import api from '../../../services/api';
 
 export const getIncidents = async (params = {}) => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');

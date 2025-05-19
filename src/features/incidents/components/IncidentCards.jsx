@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-
-const palette = {
-  celeste: '#009fc3'
-};
+import palette from '../utils/palette';
 
 const IncidentCards = ({ incidents, onChangeStatus }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -25,7 +22,7 @@ const IncidentCards = ({ incidents, onChangeStatus }) => {
           <div
             key={incident.id}
             style={{
-              background: '#fff',
+              background: palette.blanco,
               borderRadius: 12,
               boxShadow: '0 2px 8px #0001',
               padding: 0,
@@ -38,7 +35,6 @@ const IncidentCards = ({ incidents, onChangeStatus }) => {
               overflow: 'hidden'
             }}
           >
-            {/* Imagen ocupa la mitad superior de la tarjeta */}
             {incident.image_url && (
               <div
                 style={{
@@ -64,10 +60,7 @@ const IncidentCards = ({ incidents, onChangeStatus }) => {
                 />
               </div>
             )}
-
-            {/* Contenido de la tarjeta */}
             <div style={{ padding: 20, width: '100%' }}>
-              {/* ID como campo normal */}
               <div style={{ fontSize: 14, color: '#888', marginBottom: 4 }}>
                 ID: <b style={{ color: palette.celeste }}>{`INC-${incident.id.toString().padStart(3, '0')}`}</b>
               </div>
@@ -83,11 +76,10 @@ const IncidentCards = ({ incidents, onChangeStatus }) => {
               <div style={{ fontSize: 14, color: '#888', marginBottom: 12 }}>
                 Reportado: {incident.report_date?.slice(0, 10)}
               </div>
-              {/* Botón para cambiar estado */}
               <button
                 style={{
                   background: palette.celeste,
-                  color: '#fff',
+                  color: palette.blanco,
                   border: 'none',
                   borderRadius: 8,
                   padding: '8px 18px',
@@ -103,8 +95,6 @@ const IncidentCards = ({ incidents, onChangeStatus }) => {
           </div>
         ))}
       </div>
-
-      {/* Modal para mostrar la imagen completa */}
       {modalOpen && (
         <div
           onClick={closeModal}
@@ -126,7 +116,7 @@ const IncidentCards = ({ incidents, onChangeStatus }) => {
               maxHeight: '90vh',
               borderRadius: 12,
               boxShadow: '0 4px 24px #0008',
-              background: '#fff'
+              background: palette.blanco
             }}
           />
         </div>

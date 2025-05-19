@@ -1,30 +1,28 @@
 import React, { useState } from 'react';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
-import CustomButton from '../../components/Button';
-import CustomInput from '../../components/Input';
-import logo from '../../assets/login/logo.png';
-import adminLogin from '../../assets/login/admin_login.png';
-import AuthLayout from '../../layouts/AuthLayout';
-import authService from './authService';
+import CustomButton from '../../../components/Button';
+import CustomInput from '../../../components/Input';
+import logo from '../../../assets/login/logo.png';
+import adminLogin from '../../../assets/login/admin_login.png';
+import AuthLayout from '../../../layouts/AuthLayout';
+import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const { login, loading, error } = useAuth();
+  const [localError, setLocalError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      setError('Por favor, complete todos los campos.');
+      setLocalError('Por favor, complete todos los campos.');
       return;
     }
-    setError('');
-    try {
-      await authService.login(email, password);
+    setLocalError('');
+    const user = await login({ email, password });
+    if (user) {
       window.location.href = "/dashboard";
-    } catch (err) {
-      setError('Credenciales incorrectas o error de conexión.');
-      console.log(err?.response?.data || err);
     }
   };
 
@@ -49,8 +47,7 @@ const Login = () => {
             flexDirection: 'column',
             justifyContent: 'flex-start',
             alignItems: 'center',
-            //background: '#fff',
-            paddingTop: '48px' 
+            paddingTop: '48px'
           }}
         >
           <div style={{ width: '100%', maxWidth: 370 }}>
@@ -75,7 +72,9 @@ const Login = () => {
                 onChange={e => setPassword(e.target.value)}
                 icon={<FaLock color="#00AEEF" />}
               />
-              {error && <div className="alert alert-danger py-1">{error}</div>}
+              {(localError || error) && (
+                <div className="alert alert-danger py-1">{localError || error}</div>
+              )}
               <CustomButton
                 type="submit"
                 style={{
@@ -85,8 +84,9 @@ const Login = () => {
                   border: 'none',
                   fontWeight: 600
                 }}
+                disabled={loading}
               >
-                INGRESAR
+                {loading ? 'Ingresando...' : 'INGRESAR'}
               </CustomButton>
             </form>
           </div>
