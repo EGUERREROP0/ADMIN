@@ -5,15 +5,20 @@ import {
   CardContent,
   CardMedia,
   Typography,
-  Button,
   Box,
   Dialog,
   DialogContent,
   Chip,
   Stack
 } from '@mui/material';
+import ActionMenu from './ActionMenu';
 
-const IncidentCards = ({ incidents, onChangeStatus }) => {
+const IncidentCards = ({
+  incidents,
+  onChangeStatus,
+  onDelete,
+  onDetail
+}) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImg, setModalImg] = useState('');
 
@@ -42,13 +47,24 @@ const IncidentCards = ({ incidents, onChangeStatus }) => {
               display: 'flex',
               flexDirection: 'column',
               overflow: 'hidden',
-              fontFamily: 'Nunito, Arial, sans-serif'
+              fontFamily: 'Nunito, Arial, sans-serif',
+              position: 'relative'
             }}
           >
+            {/* Menú de acciones en la esquina superior derecha */}
+            <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 2 }}>
+              <ActionMenu
+                incident={incident}
+                onChangeStatus={onChangeStatus}
+                onDelete={onDelete}
+                onDetail={onDetail}
+                iconColor="#fff" // Cambia el color de los tres puntitos a blanco
+              />
+            </Box>
             {incident.image_url && (
               <CardMedia
                 component="img"
-                height="120"
+                height="200"
                 image={incident.image_url}
                 alt="Incidente"
                 sx={{
@@ -90,26 +106,6 @@ const IncidentCards = ({ incidents, onChangeStatus }) => {
                 <Typography variant="caption" color="text.secondary">
                   Reportado: {incident.report_date?.slice(0, 10)}
                 </Typography>
-                <Button
-                  variant="contained"
-                  size="small"
-                  sx={{
-                    mt: 1,
-                    bgcolor: palette.celeste,
-                    color: palette.blanco,
-                    borderRadius: 2,
-                    fontWeight: 700,
-                    fontFamily: 'Nunito, Arial, sans-serif',
-                    textTransform: 'none',
-                    boxShadow: 'none',
-                    '&:hover': {
-                      bgcolor: palette.celeste
-                    }
-                  }}
-                  onClick={() => onChangeStatus && onChangeStatus(incident)}
-                >
-                  Cambiar estado
-                </Button>
               </Stack>
             </CardContent>
           </Card>

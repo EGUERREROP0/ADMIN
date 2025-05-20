@@ -2,6 +2,17 @@ import React from 'react';
 import CustomModal from '../../../components/Modal';
 import CustomButton from '../../../components/Button/CustomButton';
 import palette from '../../../utils/palette';
+import {
+  Box,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Stack,
+  Alert,
+  CircularProgress
+} from '@mui/material';
 
 const IncidentStatusModal = ({
   show,
@@ -15,53 +26,75 @@ const IncidentStatusModal = ({
   error
 }) => (
   <CustomModal show={show} onHide={onHide} title="Cambiar estado">
-    <div style={{ background: palette.grisClaro, borderRadius: 8, padding: 16 }}>
-      <p>
+    <Box
+      sx={{
+        background: palette.grisClaro,
+        borderRadius: 2,
+        p: 3,
+        fontFamily: 'Nunito, Arial, sans-serif'
+      }}
+    >
+      <Typography sx={{ mb: 2 }}>
         <b>Incidente ID:</b> {incident?.id}
-      </p>
-      <label style={{ color: palette.celeste, fontWeight: 600 }}>
-        Nuevo estado:
-      </label>
-      <select
-        className="form-select mt-2"
-        value={newStatusId}
-        onChange={e => setNewStatusId(e.target.value)}
-        style={{ borderColor: palette.celeste, fontWeight: 500 }}
-        disabled={updating}
-      >
-        <option value="">Selecciona...</option>
-        {statuses.map(status => (
-          <option key={status.id} value={status.id}>
-            {status.name.charAt(0).toUpperCase() + status.name.slice(1).replace('_', ' ')}
-          </option>
-        ))}
-      </select>
-      <div className="d-flex justify-content-end gap-2 mt-4">
-        <button
+      </Typography>
+      <FormControl fullWidth size="small" sx={{ mb: 3 }}>
+        <InputLabel id="status-select-label" sx={{ fontWeight: 600 }}>
+          Nuevo estado
+        </InputLabel>
+        <Select
+          labelId="status-select-label"
+          value={newStatusId}
+          label="Nuevo estado"
+          onChange={e => setNewStatusId(e.target.value)}
+          disabled={updating}
+          sx={{
+            fontWeight: 500,
+            borderColor: palette.celeste,
+            background: '#fff'
+          }}
+        >
+          <MenuItem value="">Selecciona...</MenuItem>
+          {statuses.map(status => (
+            <MenuItem key={status.id} value={status.id}>
+              {status.name.charAt(0).toUpperCase() + status.name.slice(1).replace('_', ' ')}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mt: 2 }}>
+        <CustomButton
           type="button"
-          className="btn btn-secondary"
           onClick={onHide}
           disabled={updating}
+          style={{
+            background: '#919291',
+            color: '#fff'
+          }}
         >
           Cancelar
-        </button>
+        </CustomButton>
         <CustomButton
           type="button"
           onClick={onUpdateStatus}
           disabled={updating}
+          style={{ minWidth: 120 }}
         >
           {updating ? (
-            <span>
-              <span className="spinner-border spinner-border-sm me-2" role="status" />
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <CircularProgress size={18} color="inherit" sx={{ mr: 1 }} />
               Actualizando...
             </span>
           ) : (
             'Actualizar'
           )}
         </CustomButton>
-      </div>
-      {error && <div className="alert alert-danger mt-3">{error}</div>}
-    </div>
+      </Stack>
+      {error && (
+        <Alert severity="error" sx={{ mt: 3 }}>
+          {error}
+        </Alert>
+      )}
+    </Box>
   </CustomModal>
 );
 

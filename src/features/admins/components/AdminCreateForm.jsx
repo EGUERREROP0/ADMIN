@@ -5,21 +5,9 @@ import CustomInput from '../../../components/Input/CustomInput';
 import { createAdmin } from '../services/adminService';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 const MySwal = withReactContent(Swal);
-
-const selectStyle = {
-  width: '100%',
-  padding: '8px 12px',
-  borderRadius: '6px',
-  border: '1px solid #bdbdbd',
-  fontSize: '15px',
-  marginTop: '4px',
-  marginBottom: '8px',
-  background: '#f8f9fa',
-  outline: 'none',
-  transition: 'border-color 0.2s',
-};
 
 const labelStyle = {
   fontWeight: 500,
@@ -58,13 +46,13 @@ const AdminCreateForm = ({ onSuccess }) => {
         password: '',
         incident_type_id: ''
       });
+      if (onSuccess) onSuccess(); // Cierra el modal antes de mostrar Swal
       await MySwal.fire({
         title: '¡Éxito!',
         text: 'Administrador creado correctamente.',
         icon: 'success',
         confirmButtonText: 'OK'
       });
-      if (onSuccess) onSuccess();
     } catch (err) {
       await MySwal.fire({
         title: 'Error',
@@ -77,7 +65,6 @@ const AdminCreateForm = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
-      
       <div>
         <label style={labelStyle}>Nombre</label>
         <CustomInput
@@ -121,19 +108,22 @@ const AdminCreateForm = ({ onSuccess }) => {
         />
       </div>
       <div>
-        <label style={labelStyle}>Tipo de incidente</label>
-        <select
-          name="incident_type_id"
-          value={form.incident_type_id}
-          onChange={handleChange}
-          required
-          style={selectStyle}
-        >
-          <option value="" disabled>Seleccione...</option>
-          {incidentTypes.map(type => (
-            <option key={type.id} value={type.id}>{type.name}</option>
-          ))}
-        </select>
+        <FormControl fullWidth size="small" sx={{ mt: 1, mb: 2 }}>
+          <InputLabel id="incident-type-label">Tipo de incidente</InputLabel>
+          <Select
+            labelId="incident-type-label"
+            name="incident_type_id"
+            value={form.incident_type_id}
+            label="Tipo de incidente"
+            onChange={handleChange}
+            required
+          >
+            <MenuItem value="" disabled>Seleccione...</MenuItem>
+            {incidentTypes.map(type => (
+              <MenuItem key={type.id} value={type.id}>{type.name}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </div>
       <div style={{ marginTop: 16 }}>
         <CustomButton type="submit" style={{ width: '100%' }}>
