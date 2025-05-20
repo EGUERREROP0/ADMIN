@@ -115,7 +115,7 @@ const TypeIncidentList = () => {
             }}
           />
           <CustomButton type="submit">
-            Agregar
+            AGREGAR
           </CustomButton>
         </form>
         {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}

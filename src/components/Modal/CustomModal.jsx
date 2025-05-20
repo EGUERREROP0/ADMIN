@@ -10,7 +10,7 @@ const CustomModal = ({ show, onHide, title, children }) => (
   <Dialog
     open={show}
     onClose={onHide}
-    maxWidth="xs" // Modal más angosto
+    maxWidth="xs" 
     fullWidth
     hideBackdrop
     PaperProps={{

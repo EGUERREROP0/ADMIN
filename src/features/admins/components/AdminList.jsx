@@ -29,7 +29,7 @@ const AdminList = () => {
         <h3 style={{ color: palette.celeste, fontWeight: 700, fontFamily: 'Nunito, Arial, sans-serif' }}>Administradores</h3>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
           <CustomButton onClick={() => setShowModal(true)}>
-            + Agregar administrador
+            + AGREGAR ADMIN
           </CustomButton>
         </div>
         {error && <div className="alert alert-danger">{error}</div>}
