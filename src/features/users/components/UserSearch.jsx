@@ -1,21 +1,6 @@
 import React, { useState } from 'react';
-
-const SearchIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#fff"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    style={{ display: 'block', margin: 'auto' }}
-  >
-    <circle cx="11" cy="11" r="7" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
+import { Box, TextField, IconButton, Paper, InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 const UserSearch = ({ onSearch }) => {
   const [search, setSearch] = useState('');
@@ -28,52 +13,49 @@ const UserSearch = ({ onSearch }) => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
+    <Paper
+      elevation={2}
+      sx={{
         display: 'flex',
-        marginBottom: 16,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center',
+        mb: 2,
+        p: 2,
+        borderRadius: 2,
+        background: 'var(--color-module, #fff)'
       }}
     >
-      <div style={{ display: 'flex', width: '50%' }}>
-        <input
-          type="text"
-          placeholder="Buscar usuario por nombre, apellido o rol"
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ width: '100%', maxWidth: 400 }}
+      >
+        <TextField
+          fullWidth
+          size="medium"
+          placeholder="Buscar incidente..."
           value={search}
           onChange={handleInputChange}
-          style={{
-            flex: 1,
-            padding: '10px 16px',
-            border: 'none',
-            borderRadius: '8px 0 0 8px',
-            fontSize: 16,
+          variant="outlined"
+          sx={{
             background: '#fff',
-            color: '#222',
-            outline: 'none',
-            height: 42,
+            borderRadius: 2,
+            '& fieldset': { borderColor: '#e0e0e0' },
+            fontSize: 17
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton type="submit" sx={{ color: '#2c3a59' }}>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+            style: { height: 48 }
           }}
         />
-        <button
-          type="submit"
-          style={{
-            background: '#2c3a59',
-            border: 'none',
-            borderRadius: '0 8px 8px 0',
-            width: 48,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            height: 42,
-          }}
-          tabIndex={0}
-          aria-label="Buscar"
-        >
-          <SearchIcon />
-        </button>
-      </div>
-    </form>
+      </Box>
+    </Paper>
   );
 };
 

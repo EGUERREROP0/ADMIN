@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
 import palette from '../../../utils/palette';
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Button,
+  Box,
+  Dialog,
+  DialogContent,
+  Chip,
+  Stack
+} from '@mui/material';
 
 const IncidentCards = ({ incidents, onChangeStatus }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -17,110 +29,107 @@ const IncidentCards = ({ incidents, onChangeStatus }) => {
 
   return (
     <>
-      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
         {incidents.map((incident) => (
-          <div
+          <Card
             key={incident.id}
-            style={{
-              background: palette.blanco,
-              borderRadius: 12,
-              boxShadow: '0 2px 8px #0001',
-              padding: 0,
+            sx={{
+              borderRadius: 1,
+              boxShadow: '0 2px 8px #00AEEF22',
               minWidth: 300,
               maxWidth: 340,
               flex: '1 1 300px',
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'flex-start',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              fontFamily: 'Nunito, Arial, sans-serif'
             }}
           >
             {incident.image_url && (
-              <div
-                style={{
-                  width: '100%',
-                  height: 120,
-                  background: '#f4f4f4',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer'
+              <CardMedia
+                component="img"
+                height="120"
+                image={incident.image_url}
+                alt="Incidente"
+                sx={{
+                  objectFit: 'cover',
+                  cursor: 'pointer',
+                  background: '#f4f4f4'
                 }}
                 onClick={() => handleImgClick(incident.image_url)}
                 title="Ver imagen completa"
-              >
-                <img
-                  src={incident.image_url}
-                  alt="Incidente"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
-                  }}
-                />
-              </div>
+              />
             )}
-            <div style={{ padding: 20, width: '100%' }}>
-              <div style={{ fontSize: 14, color: '#888', marginBottom: 4 }}>
-                ID: <b style={{ color: palette.celeste }}>{`INC-${incident.id.toString().padStart(3, '0')}`}</b>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                {incident.description}
-              </div>
-              <div style={{ fontSize: 14, color: '#888', marginBottom: 4 }}>
-                Prioridad: <b>{incident.priority}</b>
-              </div>
-              <div style={{ fontSize: 14, color: '#888', marginBottom: 4 }}>
-                Tipo: <b>{incident.incident_type?.name}</b>
-              </div>
-              <div style={{ fontSize: 14, color: '#888', marginBottom: 12 }}>
-                Reportado: {incident.report_date?.slice(0, 10)}
-              </div>
-              <button
-                style={{
-                  background: palette.celeste,
-                  color: palette.blanco,
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '8px 18px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  fontSize: 15
-                }}
-                onClick={() => onChangeStatus && onChangeStatus(incident)}
-              >
-                Cambiar estado
-              </button>
-            </div>
-          </div>
+            <CardContent sx={{ p: 2.5 }}>
+              <Stack spacing={1}>
+                <Typography variant="caption" color="text.secondary">
+                  ID: <b style={{ color: palette.celeste }}>{`INC-${incident.id.toString().padStart(3, '0')}`}</b>
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5 }}>
+                  {incident.description}
+                </Typography>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography variant="caption" color="text.secondary">Prioridad:</Typography>
+                  <Chip
+                    label={incident.priority}
+                    size="small"
+                    sx={{
+                      bgcolor: palette.celeste,
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontFamily: 'Nunito, Arial, sans-serif'
+                    }}
+                  />
+                </Stack>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography variant="caption" color="text.secondary">Tipo:</Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 700 }}>
+                    {incident.incident_type?.name}
+                  </Typography>
+                </Stack>
+                <Typography variant="caption" color="text.secondary">
+                  Reportado: {incident.report_date?.slice(0, 10)}
+                </Typography>
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    mt: 1,
+                    bgcolor: palette.celeste,
+                    color: palette.blanco,
+                    borderRadius: 2,
+                    fontWeight: 700,
+                    fontFamily: 'Nunito, Arial, sans-serif',
+                    textTransform: 'none',
+                    boxShadow: 'none',
+                    '&:hover': {
+                      bgcolor: palette.celeste
+                    }
+                  }}
+                  onClick={() => onChangeStatus && onChangeStatus(incident)}
+                >
+                  Cambiar estado
+                </Button>
+              </Stack>
+            </CardContent>
+          </Card>
         ))}
-      </div>
-      {modalOpen && (
-        <div
-          onClick={closeModal}
-          style={{
-            position: 'fixed',
-            top: 0, left: 0, right: 0, bottom: 0,
-            background: 'rgba(0,0,0,0.7)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999
-          }}
-        >
+      </Box>
+      <Dialog open={modalOpen} onClose={closeModal} maxWidth="md">
+        <DialogContent sx={{ p: 0, background: palette.blanco }}>
           <img
             src={modalImg}
             alt="Incidente grande"
             style={{
               maxWidth: '90vw',
-              maxHeight: '90vh',
+              maxHeight: '80vh',
               borderRadius: 12,
-              boxShadow: '0 4px 24px #0008',
-              background: palette.blanco
+              display: 'block',
+              margin: 'auto'
             }}
           />
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

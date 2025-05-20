@@ -2,6 +2,9 @@ import React from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import barColors from '../utils/barColors';
 import palette from '../../../utils/palette';
+import { Box, Typography, CircularProgress, Button, Stack, Paper } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 const PrioridadPieChart = ({
   data,
@@ -10,22 +13,35 @@ const PrioridadPieChart = ({
   onExportPDF,
   chartRef
 }) => (
-  <div style={{
-    background: palette.grisClaro,
-    borderRadius: 12,
-    padding: '2rem',
-    maxWidth: 400,
-    flex: '1 1 300px'
-  }}>
-    <h5 style={{ color: palette.celeste, fontWeight: 600 }}>Incidentes por prioridad</h5>
+  <Paper
+    elevation={2}
+    sx={{
+      background: palette.grisClaro,
+      borderRadius: 3,
+      p: 4,
+      maxWidth: 400,
+      flex: '1 1 300px'
+    }}
+  >
+    <Typography
+      variant="h6"
+      sx={{
+        color: palette.celeste,
+        fontWeight: 700,
+        mb: 2,
+        fontFamily: 'Nunito, Arial, sans-serif'
+      }}
+    >
+      Incidentes por prioridad
+    </Typography>
     {loading ? (
-      <div className="d-flex align-items-center" style={{ minHeight: 120 }}>
-        <div className="spinner-border text-info me-2" role="status" />
-        <span style={{ color: palette.celeste }}>Cargando prioridades...</span>
-      </div>
+      <Box sx={{ minHeight: 120, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <CircularProgress color="info" size={28} />
+        <Typography sx={{ color: palette.celeste }}>Cargando prioridades...</Typography>
+      </Box>
     ) : (
       <>
-        <div ref={chartRef} style={{ width: '100%', height: 300 }}>
+        <Box ref={chartRef} sx={{ width: '100%', height: 300 }}>
           <ResponsiveContainer>
             <PieChart>
               <Pie
@@ -45,18 +61,40 @@ const PrioridadPieChart = ({
               <Legend />
             </PieChart>
           </ResponsiveContainer>
-        </div>
-        <div style={{ marginTop: 16, display: 'flex', gap: 12 }}>
-          <button className="btn btn-success" onClick={onExportExcel}>
-            Exportar datos a Excel
-          </button>
-          <button className="btn btn-danger" onClick={onExportPDF}>
-            Exportar gráfico a PDF
-          </button>
-        </div>
+        </Box>
+        <Stack direction="row" spacing={2} mt={2}>
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<DownloadIcon />}
+            onClick={onExportExcel}
+            sx={{
+              fontWeight: 600,
+              textTransform: 'none',
+              borderRadius: 2,
+              fontFamily: 'Nunito, Arial, sans-serif'
+            }}
+          >
+            Exportar a Excel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<PictureAsPdfIcon />}
+            onClick={onExportPDF}
+            sx={{
+              fontWeight: 600,
+              textTransform: 'none',
+              borderRadius: 2,
+              fontFamily: 'Nunito, Arial, sans-serif'
+            }}
+          >
+            Exportar a PDF
+          </Button>
+        </Stack>
       </>
     )}
-  </div>
+  </Paper>
 );
 
 export default PrioridadPieChart;
