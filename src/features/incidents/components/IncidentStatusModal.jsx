@@ -14,7 +14,7 @@ const IncidentStatusModal = ({
   onUpdateStatus,
   error
 }) => (
-  <CustomModal show={show} onHide={onHide} title="Cambiar estado del incidente">
+  <CustomModal show={show} onHide={onHide} title="Cambiar estado">
     <div style={{ background: palette.grisClaro, borderRadius: 8, padding: 16 }}>
       <p>
         <b>Incidente ID:</b> {incident?.id}

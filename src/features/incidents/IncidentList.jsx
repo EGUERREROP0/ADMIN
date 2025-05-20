@@ -143,9 +143,9 @@ const IncidentList = () => {
           <button
             onClick={() => setVista('tabla')}
             style={{
-              background: vista === 'tabla' ? '#2c3a59' : '#fff',
+              background: vista === 'tabla' ? '#009fc3' : '#fff',
               color: vista === 'tabla' ? '#fff' : '#2c3a59',
-              border: '1px solid #2c3a59',
+              border: '1px solid #009fc3',
               borderRadius: '6px 0 0 6px',
               padding: '6px 18px',
               cursor: 'pointer'
@@ -156,9 +156,9 @@ const IncidentList = () => {
           <button
             onClick={() => setVista('tarjetas')}
             style={{
-              background: vista === 'tarjetas' ? '#2c3a59' : '#fff',
+              background: vista === 'tarjetas' ? '#009fc3' : '#fff',
               color: vista === 'tarjetas' ? '#fff' : '#2c3a59',
-              border: '1px solid #2c3a59',
+              border: '1px solid #009fc3',
               borderLeft: 'none',
               borderRadius: '0 6px 6px 0',
               padding: '6px 18px',

@@ -1,113 +1,91 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import { FaEllipsisV, FaTrash, FaPen, FaInfoCircle } from 'react-icons/fa';
 import palette from '../../../utils/palette';
 
 const ActionMenu = ({ onChangeStatus, onDelete, onDetail }) => {
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const handleOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
 
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }} ref={menuRef}>
-      <button
-        type="button"
-        style={{
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          padding: 6,
-          borderRadius: 6
+    <>
+      <IconButton
+        onClick={handleOpen}
+        size="small"
+        sx={{
+          color: palette.celeste,
+          borderRadius: 2,
+          p: 0.5
         }}
-        onClick={() => setOpen((v) => !v)}
         title="Acciones"
       >
-        <FaEllipsisV size={22} color={palette.celeste} />
-      </button>
-      {open && (
-        <div
-          style={{
-            position: 'absolute',
-            right: 0,
-            zIndex: 10,
-            minWidth: 170,
-            background: '#fff',
-            borderRadius: 18,
+        <FaEllipsisV size={22} />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            minWidth: 180,
             boxShadow: '0 4px 16px #00AEEF22',
-            marginTop: 8,
-            overflow: 'hidden'
+            fontFamily: 'Nunito, Arial, sans-serif'
+          }
+        }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+      >
+        <MenuItem
+          onClick={() => { handleClose(); onChangeStatus(); }}
+          sx={{
+            color: palette.celeste,
+            fontWeight: 600,
+            fontSize: 16
           }}
         >
-          <button
-            type="button"
-            onClick={() => { setOpen(false); onChangeStatus(); }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              width: '100%',
-              background: palette.grisMedio,
-              color: palette.celeste,
-              border: 'none',
-              padding: '18px 20px',
-              fontSize: 20,
-              fontWeight: 500,
-              cursor: 'pointer',
-              borderBottom: '1px solid #f0f0f0'
-            }}
-          >
-            <FaPen style={{ marginRight: 12 }} />
-            Cambiar estado
-          </button>
-          <button
-            type="button"
-            onClick={() => { setOpen(false); onDelete(); }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              width: '100%',
-              background: '#fff0f0',
-              color: palette.rojo,
-              border: 'none',
-              padding: '18px 20px',
-              fontSize: 20,
-              fontWeight: 500,
-              cursor: 'pointer',
-              borderBottom: '1px solid #f0f0f0'
-            }}
-          >
-            <FaTrash style={{ marginRight: 12 }} />
-            Eliminar
-          </button>
-          <button
-            type="button"
-            onClick={() => { setOpen(false); onDetail(); }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              width: '100%',
-              background: '#f8f9fa',
-              color: palette.celeste,
-              border: 'none',
-              padding: '18px 20px',
-              fontSize: 20,
-              fontWeight: 500,
-              cursor: 'pointer'
-            }}
-          >
-            <FaInfoCircle style={{ marginRight: 12 }} />
-            Ver detalle
-          </button>
-        </div>
-      )}
-    </div>
+          <ListItemIcon sx={{ color: palette.celeste }}>
+            <FaPen size={18} />
+          </ListItemIcon>
+          <ListItemText primary="Cambiar estado" />
+        </MenuItem>
+        <MenuItem
+          onClick={() => { handleClose(); onDelete(); }}
+          sx={{
+            color: palette.rojo,
+            fontWeight: 600,
+            fontSize: 16
+          }}
+        >
+          <ListItemIcon sx={{ color: palette.rojo }}>
+            <FaTrash size={18} />
+          </ListItemIcon>
+          <ListItemText primary="Eliminar" />
+        </MenuItem>
+        <MenuItem
+          onClick={() => { handleClose(); onDetail(); }}
+          sx={{
+            color: palette.celeste,
+            fontWeight: 600,
+            fontSize: 16
+          }}
+        >
+          <ListItemIcon sx={{ color: palette.celeste }}>
+            <FaInfoCircle size={18} />
+          </ListItemIcon>
+          <ListItemText primary="Ver detalle" />
+        </MenuItem>
+      </Menu>
+    </>
   );
 };
 
