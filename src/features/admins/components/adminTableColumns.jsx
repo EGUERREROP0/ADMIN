@@ -25,7 +25,7 @@ export const adminTableColumns = () => [
           background: u.is_active ? palette.grisMedio : '#f8d7da',
           color: u.is_active ? palette.celeste : '#c82333',
           padding: '0.25rem 0.75rem',
-          borderRadius: 12,
+          borderRadius: 1,
           fontWeight: 600,
           fontSize: 14
         }}

@@ -88,7 +88,7 @@ const TypeIncidentList = () => {
         maxWidth: 600,
         margin: '2rem auto',
         background: palette.blanco,
-        borderRadius: 12,
+        borderRadius: 1,
         boxShadow: '0 2px 8px #00AEEF22',
         padding: 32
       }}>
@@ -108,7 +108,7 @@ const TypeIncidentList = () => {
             style={{
               flex: 1,
               padding: 8,
-              borderRadius: 6,
+              borderRadius: 1,
               border: '1px solid #ccc',
               fontSize: 16,
               fontFamily: 'Nunito, Arial, sans-serif'

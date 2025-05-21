@@ -112,7 +112,7 @@ const IncidentList = () => {
         className="module-container"
         style={{
           background: moduleBg,
-          borderRadius: 16,
+          borderRadius: 1,
           padding: '2rem',
           margin: '1rem 0',
           boxShadow: '0 2px 8px #00AEEF11',
