@@ -69,8 +69,10 @@ const IncidentList = () => {
       setSuccess('Estado actualizado correctamente.');
       setShowStatusModal(false);
       fetchIncidents();
-    } catch {
-      setError('No se pudo actualizar el estado.');
+    } catch (error) {
+      console.error('Error al actualizar estado:', error);
+      // Muestra el mensaje de error del backend si está disponible
+      setError(error?.response?.data?.message || 'No se pudo actualizar el estado.');
     } finally {
       setUpdating(false);
     }

@@ -30,6 +30,8 @@ export const updateIncidentStatus = async (incidentId, statusId) => {
   return api.put(`/incident/${incidentId}/status`, { status_id: statusId });
 };
 
+//http://localhost:4000/api/v1/incident/31/status
+
 export const getIncidentTypes = async () => {
   const response = await api.get('/type-incident');
   return Array.isArray(response.data) ? response.data : [];

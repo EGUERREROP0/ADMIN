@@ -38,11 +38,11 @@ const MainLayout = ({ children }) => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--color-bg, #f8f9fa)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--color-bg, #009fc3)' }}>
       <nav
         className="navbar navbar-light"
         style={{
-          background: 'var(--color-header, #fff)',
+          background: 'var(--color-header, #009fc3)',
           boxShadow: '0 2px 8px #00AEEF22',
           padding: '0.5rem 2rem',
           display: 'flex',
@@ -86,7 +86,7 @@ const MainLayout = ({ children }) => {
                   justifyContent: 'center',
                   height: '100%',
                   fontSize: 16,
-                  color: '#fff',
+                  color: '#009fc3',
                   paddingLeft: 6
                 }}
               >

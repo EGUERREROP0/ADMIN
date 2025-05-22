@@ -30,7 +30,7 @@ const ActionMenu = ({ onChangeStatus, onDelete, onDetail }) => {
         onClose={handleClose}
         PaperProps={{
           sx: {
-            borderRadius: 3,
+            borderRadius: 1,
             minWidth: 180,
             boxShadow: '0 4px 16px #00AEEF22',
             fontFamily: 'Nunito, Arial, sans-serif'
