@@ -4,6 +4,9 @@ import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
+//para responsive
+import './global.css';
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />

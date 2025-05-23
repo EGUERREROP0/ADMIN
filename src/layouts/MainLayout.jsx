@@ -6,6 +6,7 @@ import Sidebar from '../components/Sidebar';
 import logoTecsup from '../assets/header/logo_tecsup.png';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const MySwal = withReactContent(Swal);
 
@@ -13,6 +14,8 @@ const MainLayout = ({ children }) => {
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width:900px)');
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', darkMode);
@@ -50,12 +53,31 @@ const MainLayout = ({ children }) => {
           alignItems: 'center'
         }}
       >
-        {/* Logo Tecsup */}
-        <img
-          src={logoTecsup}
-          alt="Logo Tecsup"
-          style={{ height: 60, objectFit: 'contain' }}
-        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {/* Botón menú solo en móviles */}
+          {isMobile && (
+            <button
+              onClick={() => setSidebarOpen(true)}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: 28,
+                cursor: 'pointer',
+                color: '#fff',
+                marginRight: 8
+              }}
+              aria-label="Abrir menú"
+            >
+              ☰
+            </button>
+          )}
+          {/* Logo Tecsup */}
+          <img
+            src={logoTecsup}
+            alt="Logo Tecsup"
+            style={{ height: 60, objectFit: 'contain' }}
+          />
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           {/* Switch modo oscuro */}
           <Switch
@@ -109,7 +131,8 @@ const MainLayout = ({ children }) => {
         </div>
       </nav>
       <div style={{ display: 'flex' }}>
-        <Sidebar />
+        {/* Sidebar: abierto fijo en escritorio, Drawer en móvil */}
+        <Sidebar open={!isMobile || sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main style={{ flex: 1, padding: '2rem' }}>{children}</main>
       </div>
     </div>
