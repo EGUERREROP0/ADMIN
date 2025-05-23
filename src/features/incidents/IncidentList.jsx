@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainLayout from '../../layouts/MainLayout';
 import IncidentFilters from './components/IncidentFilters';
 import IncidentCards from './components/IncidentCards';
@@ -9,6 +9,7 @@ import palette from '../../utils/palette';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import IncidentTable from './components/IncidentTable';
+import { updateIncidentStatus } from './services/incidentService';
 
 const MySwal = withReactContent(Swal);
 
@@ -16,7 +17,6 @@ const tableTextColor = 'var(--color-text, #222)';
 const moduleBg = 'var(--color-module, #f8f9fa)';
 
 const IncidentList = () => {
-  // Hook personalizado para lógica y datos
   const {
     incidents,
     loading,
@@ -35,7 +35,12 @@ const IncidentList = () => {
     setError
   } = useIncidentList();
 
-  // Estado para modales
+  useEffect(() => {
+    if (incidents && incidents.length > 0) {
+      console.log('Incidentes recibidos:', incidents);
+    }
+  }, [incidents]);
+
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState(null);
   const [newStatusId, setNewStatusId] = useState('');
@@ -45,13 +50,14 @@ const IncidentList = () => {
   const [detailIncident, setDetailIncident] = useState(null);
 
   const [success, setSuccess] = useState('');
+  const [coment, setComent] = useState('');
 
-  // Handlers
   const handleOpenStatusModal = (incident) => {
     setSelectedIncident(incident);
     setError('');
     setSuccess('');
     setNewStatusId('');
+    setComent('');
     setShowStatusModal(true);
   };
 
@@ -60,19 +66,31 @@ const IncidentList = () => {
       setError('Selecciona un estado.');
       return;
     }
+
+    const estadoSeleccionado = statuses.find(s => s.id === newStatusId);
+    const nombreEstado = estadoSeleccionado?.name?.toLowerCase() || '';
+
+    if ((nombreEstado === 'resuelto' || nombreEstado === 'cerrado') && !coment.trim()) {
+      setError('El comentario es obligatorio para los estados "Resuelto" o "Cerrado".');
+      return;
+    }
+
     setUpdating(true);
     setError('');
     try {
-      await import('./services/incidentService').then(({ updateIncidentStatus }) =>
-        updateIncidentStatus(selectedIncident.id, newStatusId)
-      );
+      console.log('Intentando cambiar a estado ID:', newStatusId, 'con comentario:', coment);
+      await updateIncidentStatus(selectedIncident.id, newStatusId, coment);
       setSuccess('Estado actualizado correctamente.');
       setShowStatusModal(false);
       fetchIncidents();
     } catch (error) {
       console.error('Error al actualizar estado:', error);
-      // Muestra el mensaje de error del backend si está disponible
-      setError(error?.response?.data?.message || 'No se pudo actualizar el estado.');
+      if (error?.response?.data) {
+        console.log('Mensaje del backend:', error.response.data);
+        setError(error.response.data.message || error.response.data.error || 'No se pudo actualizar el estado.');
+      } else {
+        setError('No se pudo actualizar el estado.');
+      }
     } finally {
       setUpdating(false);
     }
@@ -106,7 +124,7 @@ const IncidentList = () => {
     setShowDetailModal(true);
   };
 
-  const [vista, setVista] = useState('tabla'); // 'tabla' o 'tarjetas'
+  const [vista, setVista] = useState('tabla');
 
   return (
     <MainLayout>
@@ -140,7 +158,6 @@ const IncidentList = () => {
           setSearch={setSearch}
         />
 
-        {/* Selector de vista */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
           <button
             onClick={() => setVista('tabla')}
@@ -198,7 +215,6 @@ const IncidentList = () => {
           </>
         )}
 
-        {/* Modal para cambiar estado */}
         <IncidentStatusModal
           show={showStatusModal}
           onHide={() => setShowStatusModal(false)}
@@ -209,16 +225,16 @@ const IncidentList = () => {
           updating={updating}
           onUpdateStatus={handleUpdateStatus}
           error={error}
+          coment={coment}
+          setComent={setComent}
         />
 
-        {/* Modal de detalle de incidente */}
         <IncidentDetailModal
           show={showDetailModal}
           onHide={() => setShowDetailModal(false)}
           incident={detailIncident}
         />
       </div>
-      {/* Estilos para modo oscuro en tablas y módulo */}
       <style>
         {`
           .module-container {

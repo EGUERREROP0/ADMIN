@@ -28,32 +28,20 @@ const Login = () => {
 
   return (
     <AuthLayout>
-      <div
-        className="d-flex shadow-lg"
-        style={{
-          minWidth: 850,
-          maxWidth: 950,
-          minHeight: 550,
-          height: 550,
-          alignItems: 'stretch',
-          overflow: 'hidden'
-        }}
-      >
-        <div
-          style={{
-            flex: 1,
-            minWidth: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            paddingTop: '48px'
-          }}
-        >
+      <div className="d-flex shadow-lg auth-login-flex">
+        <div className="auth-login-form" style={{
+          flex: 1,
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          paddingTop: '48px'
+        }}>
           <div style={{ width: '100%', maxWidth: 370 }}>
             <div className="text-center mb-4">
-              <img src={logo} alt="Logo" style={{ width: 70 }} />
-              <h5 className="mt-3" style={{ color: '#00AEEF', fontWeight: 600 }}>
+              <img src={logo} alt="Logo" style={{ width: 70,marginBottom: 8}} />
+              <h5 className="mt-3" style={{ color: '#00AEEF', fontWeight: 600, margin: 0 }}>
                 Mesa de Ayuda
               </h5>
             </div>
@@ -91,7 +79,7 @@ const Login = () => {
             </form>
           </div>
         </div>
-        <div style={{ height: '100%', flex: 1, padding: 0, margin: 0 }}>
+        <div className="auth-login-img" style={{ height: '100%', flex: 1, padding: 0, margin: 0 }}>
           <img
             src={adminLogin}
             alt="Admin"

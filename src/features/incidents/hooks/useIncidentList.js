@@ -46,13 +46,12 @@ export function useIncidentList() {
       .finally(() => setLoading(false));
   };
 
-  // Handler para actualizar estado de incidente
-  const handleUpdateStatus = async (incidentId, newStatusId) => {
+  const handleUpdateStatus = async (incidentId, newStatusId, coment = '') => {
     setLoading(true);
     setError('');
     setSuccess('');
     try {
-      await updateIncidentStatus(incidentId, newStatusId);
+      await updateIncidentStatus(incidentId, newStatusId, coment);
       setSuccess('Estado actualizado correctamente.');
       fetchIncidents();
     } catch {
@@ -62,7 +61,6 @@ export function useIncidentList() {
     }
   };
 
-  // Handler para eliminar incidente
   const handleDeleteIncident = async (incidentId) => {
     setLoading(true);
     setError('');
