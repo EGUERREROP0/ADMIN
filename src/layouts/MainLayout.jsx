@@ -45,6 +45,10 @@ const MainLayout = ({ children }) => {
       <nav
         className="navbar navbar-light"
         style={{
+          position: 'sticky',      
+          top: 0,                
+          zIndex: 1100,           
+          width: '100%', 
           background: 'var(--color-header, #009fc3)',
           boxShadow: '0 2px 8px #00AEEF22',
           padding: '0.5rem 2rem',
