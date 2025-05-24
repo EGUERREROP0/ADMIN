@@ -92,11 +92,7 @@ const TypeIncidentList = () => {
         boxShadow: '0 2px 8px #00AEEF22',
         padding: 32
       }}>
-        <h2 style={{
-          color: palette.celeste,
-          marginBottom: 24,
-          fontFamily: 'Nunito, Arial, sans-serif'
-        }}>
+        <h2 style={{ color: palette.celeste, fontWeight: 700, fontFamily: 'Nunito, Arial, sans-serif' }}>
           Tipos de Incidente
         </h2>
         <form onSubmit={handleAddType} style={{ display: 'flex', gap: 12, marginBottom: 24 }}>

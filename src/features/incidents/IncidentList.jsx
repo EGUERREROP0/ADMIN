@@ -140,10 +140,9 @@ const IncidentList = () => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <h3 style={{ color: palette.celeste, fontWeight: 700, margin: 0 }}>
-            Incidentes
+          <h3 style={{ color: palette.celeste, fontWeight: 700, fontFamily: 'Nunito, Arial, sans-serif' }}>
+            Gestión de Incidentes
           </h3>
-          <span role="img" aria-label="Saludo" style={{ fontSize: 32, marginTop: 2 }}>👋</span>
         </div>
         <IncidentFilters
           prioridad={prioridad}

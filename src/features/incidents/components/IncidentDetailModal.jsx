@@ -36,7 +36,7 @@ const IncidentDetailModal = ({ show, onHide, incident }) => (
               textDecoration: 'none'
             }}
           >
-            {({ loading }) => loading ? 'Generando PDF...' : 'Descargar PDF'}
+            {({ loading }) => loading ? 'Generando PDF...' : 'GENERAR INFORME'}
           </PDFDownloadLink>
         </div>
       </div>

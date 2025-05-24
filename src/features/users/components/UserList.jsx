@@ -165,7 +165,9 @@ const UserList = () => {
           color: tableTextColor
         }}
       >
-        <h3 style={{ color: palette.celeste, fontWeight: 700 }}>Usuarios</h3>
+        <h3 style={{ color: palette.celeste, fontWeight: 700, fontFamily: 'Nunito, Arial, sans-serif' }}>
+          Usuarios
+        </h3>
         <UserSearch onSearch={handleSearch} />
         {error && <div className="alert alert-danger">{error}</div>}
         {loading ? (
