@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import IncidentTable from './components/IncidentTable';
 import { updateIncidentStatus } from './services/incidentService';
+import TablePagination from '@mui/material/TablePagination';
 
 const MySwal = withReactContent(Swal);
 
@@ -32,7 +33,12 @@ const IncidentList = () => {
     search,
     setSearch,
     fetchIncidents,
-    setError
+    setError,
+    page,
+    setPage,
+    rowsPerPage,
+    setRowsPerPage,
+    total
   } = useIncidentList();
 
   useEffect(() => {
@@ -126,6 +132,16 @@ const IncidentList = () => {
 
   const [vista, setVista] = useState('tabla');
 
+  // Handlers de paginación
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage + 1); 1
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(1);
+  };
+
   return (
     <MainLayout>
       <div
@@ -198,13 +214,26 @@ const IncidentList = () => {
           <>
             {success && <div className="alert alert-success">{success}</div>}
             {vista === 'tabla' ? (
-              <IncidentTable
-                incidents={incidents}
-                loading={loading}
-                onChangeStatus={handleOpenStatusModal}
-                onDelete={handleDeleteIncident}
-                onDetail={handleShowDetail}
-              />
+              <>
+                <IncidentTable
+                  incidents={incidents}
+                  loading={loading}
+                  onChangeStatus={handleOpenStatusModal}
+                  onDelete={handleDeleteIncident}
+                  onDetail={handleShowDetail}
+                />
+                <TablePagination
+                  component="div"
+                  count={total}
+                  page={page - 1}
+                  onPageChange={handleChangePage}
+                  rowsPerPage={rowsPerPage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  labelRowsPerPage="Incidentes por página"
+                  rowsPerPageOptions={[5, 10, 25, 50]}
+                  sx={{ mt: 2 }}
+                />
+              </>
             ) : (
               <IncidentCards
                 incidents={incidents}

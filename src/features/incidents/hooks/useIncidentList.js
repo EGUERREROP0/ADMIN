@@ -19,6 +19,11 @@ export function useIncidentList() {
   const [tipo, setTipo] = useState('');
   const [search, setSearch] = useState('');
 
+  // Paginación
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [total, setTotal] = useState(0);
+
   useEffect(() => {
     getIncidentStatuses()
       .then(data => setStatuses(Array.isArray(data) ? data : []))
@@ -29,9 +34,14 @@ export function useIncidentList() {
   }, []);
 
   useEffect(() => {
+    // Cuando cambian los filtros, resetea a la primera página
+    setPage(1);
+  }, [prioridad, estado, tipo, search]);
+
+  useEffect(() => {
     fetchIncidents();
     // eslint-disable-next-line
-  }, [prioridad, estado, tipo, search]);
+  }, [prioridad, estado, tipo, search, page, rowsPerPage]);
 
   const fetchIncidents = () => {
     setLoading(true);
@@ -39,9 +49,15 @@ export function useIncidentList() {
       priority: prioridad,
       status_id: estado,
       type_id: tipo,
-      search
+      search,
+      page,
+      limit: rowsPerPage
     })
-      .then(data => setIncidents(Array.isArray(data) ? data : []))
+      .then(data => {
+        setIncidents(Array.isArray(data.allIncidents) ? data.allIncidents : []);
+        setTotal(data.total || 0);
+        setPage(data.page || 1);
+      })
       .catch(() => setError('No se pudieron cargar los incidentes.'))
       .finally(() => setLoading(false));
   };
@@ -95,6 +111,12 @@ export function useIncidentList() {
     setError,
     setSuccess,
     handleUpdateStatus,
-    handleDeleteIncident
+    handleDeleteIncident,
+    // Paginación
+    page,
+    setPage,
+    rowsPerPage,
+    setRowsPerPage,
+    total
   };
 }
