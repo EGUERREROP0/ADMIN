@@ -10,24 +10,12 @@ export const getIncidents = async (params = {}) => {
 
   if (roleId === 3) {
     const response = await api.get(url);
-    // Retorna toda la respuesta para paginación
-    return response.data;
+    return Array.isArray(response.data.allIncidents) ? response.data.allIncidents : [];
   } else if (roleId === 2) {
     const response = await api.get('/admin');
-    // Ajusta según la estructura del backend para admin
-    return {
-      allIncidents: Array.isArray(response.data.incidents) ? response.data.incidents : [],
-      total: response.data.total || 0,
-      page: response.data.page || 1,
-      limit: response.data.limit || 10
-    };
+    return Array.isArray(response.data.incidents) ? response.data.incidents : [];
   }
-  return {
-    allIncidents: [],
-    total: 0,
-    page: 1,
-    limit: 10
-  };
+  return [];
 };
 
 export const getIncidentStatuses = async () => {
