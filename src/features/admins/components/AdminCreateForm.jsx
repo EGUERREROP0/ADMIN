@@ -46,7 +46,7 @@ const AdminCreateForm = ({ onSuccess }) => {
         password: '',
         incident_type_id: ''
       });
-      if (onSuccess) onSuccess(); // Cierra el modal antes de mostrar Swal
+      if (onSuccess) onSuccess(); 
       await MySwal.fire({
         title: '¡Éxito!',
         text: 'Administrador creado correctamente.',

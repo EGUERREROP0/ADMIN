@@ -1,6 +1,8 @@
 import React from 'react';
 import CustomModal from '../../../components/Modal';
 import IncidentHistory from './IncidentHistory';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import IncidentReportPDF from '../pdf/IncidentReportPDF';
 
 const IncidentDetailModal = ({ show, onHide, incident }) => (
   <CustomModal show={show} onHide={onHide} title="Detalle del incidente">
@@ -17,6 +19,26 @@ const IncidentDetailModal = ({ show, onHide, incident }) => (
           : 'Sin responsable'}
         </p>
         <IncidentHistory history={incident.incident_history || []} />
+
+        {/* Botón para descargar PDF al final */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
+          <PDFDownloadLink
+            document={<IncidentReportPDF incident={incident} />}
+            fileName={`informe_incidente_${incident.id}.pdf`}
+            style={{
+              background: '#009fc3',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 4,
+              padding: '8px 18px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              textDecoration: 'none'
+            }}
+          >
+            {({ loading }) => loading ? 'Generando PDF...' : 'Descargar PDF'}
+          </PDFDownloadLink>
+        </div>
       </div>
     )}
   </CustomModal>

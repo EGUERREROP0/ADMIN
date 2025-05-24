@@ -58,7 +58,7 @@ const IncidentCards = ({
                 onChangeStatus={onChangeStatus}
                 onDelete={onDelete}
                 onDetail={onDetail}
-                iconColor="#fff" // Cambia el color de los tres puntitos a blanco
+                iconColor="#fff" 
               />
             </Box>
             {incident.image_url && (

@@ -11,7 +11,7 @@ const Table = ({
 }) => (
   <div className="table-responsive"
     style={{
-      borderRadius: 7, // Sin borde circular
+      borderRadius: 7, 
       boxShadow: '0 4px 24px rgba(44, 62, 80, 0.08)',
       overflow: 'hidden',
       margin: '2rem 0',
