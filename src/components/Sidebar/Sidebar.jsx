@@ -9,18 +9,17 @@ import Paper from '@mui/material/Paper';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleIcon from '@mui/icons-material/People';
+import ReportIcon from '@mui/icons-material/Report';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import CategoryIcon from '@mui/icons-material/Category';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
-import dashboardIcon from '../../assets/iconos/dashboard.png';
-import usuariosIcon from '../../assets/iconos/usuarios.png';
-import incidentesIcon from '../../assets/iconos/incidentes.png';
-import adminsIcon from '../../assets/iconos/admins.png';
-import tiposIncidentesIcon from '../../assets/iconos/tipo_incidente.png';
 
 const palette = {
   celeste: '#009fc3',
   grisOscuro: '#222',
-  grisMedio: '#f0f0f0'
+  grisMedio: '#f0f0f0',
 };
 
 const SidebarContent = ({ onClose, location, sidebarLinks }) => (
@@ -31,7 +30,7 @@ const SidebarContent = ({ onClose, location, sidebarLinks }) => (
       </IconButton>
     </Box>
     <List sx={{ p: 0 }}>
-      {sidebarLinks.map(link => (
+      {sidebarLinks.map((link) => (
         <ListItemButton
           key={link.to}
           component={Link}
@@ -43,27 +42,25 @@ const SidebarContent = ({ onClose, location, sidebarLinks }) => (
             pl: 2,
             pr: 2,
             py: 1.2,
-            color: location.pathname === link.to ? palette.celeste : palette.grisOscuro,
+            color: location.pathname === link.to ? palette.celeste : '#6c757d', // Cambiado a gris (#6c757d)
             fontWeight: location.pathname === link.to ? 700 : 500,
             bgcolor: location.pathname === link.to ? palette.grisMedio : 'transparent',
             fontSize: 17,
             transition: 'color 0.3s, background 0.3s',
             '&:hover': {
               bgcolor: palette.grisMedio,
-              color: palette.celeste
-            }
+              color: palette.celeste,
+            },
           }}
           onClick={onClose}
         >
-          <ListItemIcon sx={{ minWidth: 32, color: 'inherit' }}>
-            {link.icon}
-          </ListItemIcon>
+          <ListItemIcon sx={{ minWidth: 32, color: 'inherit' }}>{link.icon}</ListItemIcon>
           <ListItemText
             primary={link.label}
             primaryTypographyProps={{
               fontWeight: location.pathname === link.to ? 700 : 500,
               fontSize: 17,
-              fontFamily: 'Nunito, Arial, sans-serif'
+              fontFamily: 'Nunito, Arial, sans-serif',
             }}
           />
         </ListItemButton>
@@ -82,30 +79,30 @@ const Sidebar = ({ open, onClose }) => {
     {
       to: '/dashboard',
       label: 'Dashboard',
-      icon: <img src={dashboardIcon} alt="Dashboard" style={{ width: 22 }} />
+      icon: <DashboardIcon />,
     },
     {
       to: '/usuarios',
       label: 'Usuarios',
-      icon: <img src={usuariosIcon} alt="Usuarios" style={{ width: 22 }} />
+      icon: <PeopleIcon />,
     },
     {
       to: '/incidentes',
       label: 'Incidentes',
-      icon: <img src={incidentesIcon} alt="Incidentes" style={{ width: 22 }} />
-    }
+      icon: <ReportIcon />,
+    },
   ];
 
   if (roleId === 3) {
     sidebarLinks.push({
       to: '/administradores',
       label: 'Administradores',
-      icon: <img src={adminsIcon} alt="Administradores" style={{ width: 22 }} />
+      icon: <AdminPanelSettingsIcon />,
     });
     sidebarLinks.push({
       to: '/tipos-incidente',
       label: 'Tipos incidente',
-      icon: <img src={tiposIncidentesIcon} alt="Tipos de incidente" style={{ width: 22 }} />
+      icon: <CategoryIcon />,
     });
   }
 
@@ -136,7 +133,7 @@ const Sidebar = ({ open, onClose }) => {
         borderRadius: 0,
         boxShadow: '2px 0 8px #b0b8c122',
         transition: 'background 0.3s',
-        position: 'static'
+        position: 'static',
       }}
       component="aside"
     >

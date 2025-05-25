@@ -3,7 +3,7 @@ import Switch from 'react-switch';
 import { MdLogout } from 'react-icons/md';
 import { ProfileMenu } from '../features/profile';
 import Sidebar from '../components/Sidebar';
-import logoTecsup from '../assets/header/logo_tecsup.png';
+import logoTecsup from '../assets/logo/tec.png';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import useMediaQuery from '@mui/material/useMediaQuery';
