@@ -10,7 +10,14 @@ export const useDashboardData = () => {
   const chartPriorityRef = useRef(null);
 
   useEffect(() => {
-    getIncidents()
+    getIncidents({
+      page: 1,
+      limit: 100,  // limite de incidentes
+      priority: '',
+      status_id: '',
+      type_id: '',
+      search: ''
+    })
       .then(data => setIncidents(Array.isArray(data) ? data : []))
       .finally(() => setLoading(false));
   }, []);
