@@ -4,6 +4,7 @@ import { MdLogout } from 'react-icons/md';
 import { ProfileMenu } from '../features/profile';
 import Sidebar from '../components/Sidebar';
 import logoTecsup from '../assets/logo/tec.png';
+import logoMesaAyuda from '../assets/logo/logo_mesa_ayuda.png'; // Importar el nuevo logo
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -45,10 +46,10 @@ const MainLayout = ({ children }) => {
       <nav
         className="navbar navbar-light"
         style={{
-          position: 'sticky',      
-          top: 0,                
-          zIndex: 1100,           
-          width: '100%', 
+          position: 'sticky',
+          top: 0,
+          zIndex: 1100,
+          width: '100%',
           background: 'var(--color-header, #009fc3)',
           boxShadow: '0 2px 8px #00AEEF22',
           padding: '0.5rem 2rem',
@@ -134,8 +135,31 @@ const MainLayout = ({ children }) => {
           />
         </div>
       </nav>
+
+      {/* rectángulo inferior */}
+      <div
+        style={{
+          position: 'sticky',
+          top: '73px', 
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: '#009fc3', 
+          padding: '0.02rem 1.5rem', 
+          color: '#fff', 
+          fontSize: '14px', 
+          gap: '1rem',
+        }}
+      >
+        <img
+          src={logoMesaAyuda}
+          alt="Logo Mesa de Ayuda"
+          style={{ height: 30, objectFit: 'contain' }} 
+        />
+        <span>Mesa de Ayuda</span>
+      </div>
+
       <div style={{ display: 'flex' }}>
-        {/* Sidebar: abierto fijo en escritorio, Drawer en móvil */}
         <Sidebar open={!isMobile || sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main style={{ flex: 1, padding: '2rem' }}>{children}</main>
       </div>
