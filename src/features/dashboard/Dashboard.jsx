@@ -52,7 +52,7 @@ const Dashboard = () => {
         <span role="img" aria-label="Saludo" style={{ fontSize: 48, marginTop: 4 }}>👋</span>
         <h2 style={{ color: palette.celeste, fontWeight: 700, margin: 0 }}>
           <Typewriter
-            words={['Bienvenido al Panel de Administración']}
+            words={['Panel de Gestión de Incidentes']}
             loop={1}
             cursor
             cursorStyle="_"

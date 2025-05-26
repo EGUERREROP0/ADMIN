@@ -37,6 +37,29 @@ const Login = () => {
           display: 'flex',
         }}
       >
+        {/* Contenedor de la imagen */}
+        <div
+          className="auth-login-img"
+          style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f8f9fa',
+          }}
+        >
+          <img
+            src={adminLogin}
+            alt="Admin"
+            style={{
+              height: '100%',
+              width: '100%',
+              objectFit: 'cover', 
+            }}
+          />
+        </div>
+
+        {/* Contenedor del formulario  */}
         <div
           className="auth-login-form"
           style={{
@@ -56,7 +79,7 @@ const Login = () => {
                 alt="Logo"
                 style={{
                   width: 290,
-                  marginBottom: 8,
+                  marginBottom: '50PX',
                   marginLeft: '60px', 
                 }}
               />
@@ -103,27 +126,6 @@ const Login = () => {
               </CustomButton>
             </form>
           </div>
-        </div>
-
-        <div
-          className="auth-login-img"
-          style={{
-            flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#f8f9fa',
-          }}
-        >
-          <img
-            src={adminLogin}
-            alt="Admin"
-            style={{
-              height: '100%',
-              width: '100%',
-              objectFit: 'cover', 
-            }}
-          />
         </div>
       </div>
     </AuthLayout>
