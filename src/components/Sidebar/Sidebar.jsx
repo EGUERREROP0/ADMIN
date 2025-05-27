@@ -22,8 +22,11 @@ const palette = {
   grisMedio: '#f0f0f0',
 };
 
+// Sombra oscura común para ambas versiones
+const darkShadow = '3px 0 10px rgba(0, 0, 0, 0.3)';
+
 const SidebarContent = ({ onClose, location, sidebarLinks }) => (
-  <Box sx={{ width: 220, minHeight: '100vh', p: '2rem 0.5rem', bgcolor: 'var(--color-sidebar, #fff)' }}>
+  <Box sx={{ width: '100%', height: '100%' }}>
     <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'flex-end', mb: 2 }}>
       <IconButton onClick={onClose}>
         <CloseIcon />
@@ -42,7 +45,7 @@ const SidebarContent = ({ onClose, location, sidebarLinks }) => (
             pl: 2,
             pr: 2,
             py: 1.2,
-            color: location.pathname === link.to ? palette.celeste : '#6c757d', // Cambiado a gris (#6c757d)
+            color: location.pathname === link.to ? palette.celeste : '#6c757d',
             fontWeight: location.pathname === link.to ? 700 : 500,
             bgcolor: location.pathname === link.to ? palette.grisMedio : 'transparent',
             fontSize: 17,
@@ -114,7 +117,14 @@ const Sidebar = ({ open, onClose }) => {
         open={open}
         onClose={onClose}
         ModalProps={{ keepMounted: true }}
-        PaperProps={{ sx: { width: 220 } }}
+        PaperProps={{ 
+          sx: { 
+            width: 220,
+            bgcolor: 'var(--color-sidebar, #fff)',
+            background: 'var(--color-sidebar, #fff)',
+            boxShadow: darkShadow, // Sombra oscura para versión móvil
+          }
+        }}
       >
         <SidebarContent onClose={onClose} location={location} sidebarLinks={sidebarLinks} />
       </Drawer>
@@ -130,9 +140,10 @@ const Sidebar = ({ open, onClose }) => {
         minHeight: 'calc(100vh - 56px)',
         p: '2rem 0.5rem',
         bgcolor: 'var(--color-sidebar, #fff)',
+        background: 'var(--color-sidebar, #fff)',
         borderRadius: 0,
-        boxShadow: '2px 0 8px #b0b8c122',
-        transition: 'background 0.3s',
+        boxShadow: darkShadow, // Sombra oscura para versión escritorio
+        transition: 'background 0.3s, box-shadow 0.3s',
         position: 'static',
       }}
       component="aside"
