@@ -1,12 +1,11 @@
-import axios from 'axios';
+import api from '../../../services/api';
 
 export const getIncidentsByPriority = async () => {
-  const token = localStorage.getItem('token');
-  const response = await axios.get(
-    '/api/v1/dashboard/incdents-by-priority', //parece que hay error tipográfico
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return response.data;
+  try {
+    const response = await api.get('/dashboard/incdents-by-priority');
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener datos de incidentes por prioridad:', error);
+    throw error;
+  }
 };
-
-
